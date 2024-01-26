@@ -1,0 +1,11 @@
+q00) Only reply with YES or NO, then explain why. Does this image have poor visibility like heavy rain, snow, fog, or adverse weather conditions?
+q01) Only reply with YES or NO, then explain why. Was the camera that took this image obstructed, covered, or damaged by mud, ice, snow, excessive paint or adhesive products?
+q02) Only reply with YES or NO, then explain why. Is the road we are driving on a sharp curve?
+q03) Only reply with YES or NO, then explain why. Is the road we are driving on an on-off ramp?
+q04) Only reply with YES or NO, then explain why. Is the road we are driving on an intersection, or does it run horizontally across the image?
+q05) Only reply with YES or NO, then explain why. Does the road we are driving have any restricted lanes, for example for buses, or bicycles?
+q06) Only reply with YES or NO, then explain why. Does the road we are driving on have any construction?
+q07) Only reply with YES or NO, then explain why. Are there any extremely bright lights from oncoming headlights, or direct sunlight into the camera?
+q08) Only reply with YES or NO, then explain why. Is the road we are driving on narrow and winding?
+q09) Only reply with YES or NO, then explain why. Is the road we are driving on hilly?
+q10) Describe all the factual information about this image. Pay attention to the road structure, road signs, traffic, pedestrians, time of day, and anything one needs to pay attention to while driving.

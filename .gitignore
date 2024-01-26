@@ -138,7 +138,7 @@ model/
 *.7z
 
 # Too big
-1_Datasets/*
+1_Datasets/Data
 
 # misc
 .DS_Store

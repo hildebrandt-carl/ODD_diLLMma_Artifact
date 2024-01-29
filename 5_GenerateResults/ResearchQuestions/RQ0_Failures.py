@@ -109,9 +109,7 @@ plt.figure(figsize=(10, 6))
 for i in range(np.shape(y_values)[0]):
     plt.semilogy(x_values, y_values[i], label=labels[i])
 
-# Plot the max
-# plt.plot(x_values, np.nanmax(y_values,axis=0), label="Maximum", linestyle='--', c="Gray")
-# plt.plot(x_values, np.nanmin(y_values,axis=0), label="Minimum", linestyle='--', c="Gray")
+# Plot the average
 plt.semilogy(x_values, np.nanmean(y_values,axis=0), label="Average", linestyle='--', c="Black")
 
 plt.xlabel('Oracle Failure Threshold (Deg)')

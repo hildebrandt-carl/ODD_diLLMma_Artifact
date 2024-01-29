@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Declare directorys
-INPUT_DIRECTORY="../../1_Datasets/Data/OpenPilot_2016/0_OriginalData/"
-OUTPUT_DIRECTORY="../../1_Datasets/Data/OpenPilot_2016/1_ProcessedData/"
+INPUT_DIRECTORY="../1_Datasets/Data/OpenPilot_2016/0_OriginalData/"
+OUTPUT_DIRECTORY="../1_Datasets/Data/OpenPilot_2016/1_ProcessedData/"
 
 # Check that the ProcessData is empty
 if [ "$(ls -A "$OUTPUT_DIRECTORY")" ]; then

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Declare directorys
-INPUT_DIRECTORY="../../1_Datasets/Data/External_jutah/0_OriginalData/"
-OUTPUT_DIRECTORY="../../1_Datasets/Data/External_jutah/1_ProcessedData/"
+INPUT_DIRECTORY="../1_Datasets/Data/External_jutah/0_OriginalData/"
+OUTPUT_DIRECTORY="../1_Datasets/Data/External_jutah/1_ProcessedData/"
 
 # Use a for loop to iterate through .mp4 files in the directory
 for file in "$INPUT_DIRECTORY"/*.mp4; do

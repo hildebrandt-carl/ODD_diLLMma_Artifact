@@ -46,8 +46,8 @@ def compute_average_steering_angle_per_frame(video_file, steering_files):
         # steering angle produced (index 0)
         # frame number (index 1)
 
-    # Create an array to hold the steering angle for each version (can hold up to 10 angles per frame)
-    raw_steering_angles = np.full((len(steering_files),frame_count+1, 10), np.nan, dtype=float)
+    # Create an array to hold the steering angle for each version (can hold up to 30 angles per frame)
+    raw_steering_angles = np.full((len(steering_files),frame_count+1, 30), np.nan, dtype=float)
 
     # Populate this array
     for ver_index in range(len(steering_files)):
@@ -125,6 +125,7 @@ def read_index_from_h5(f, index):
     return steer, frame_number
 
 def calculate_endpoint(starting_point, length, rotation):
+    rotation = np.clip(rotation, -90, 90)
     radians = math.radians(90-rotation)
     x = int(starting_point[0] + length * math.cos(radians))
     y = int(starting_point[1] - length * math.sin(radians))
@@ -168,8 +169,10 @@ def create_visual_representation(steering_angles, version_names, in_video, out_v
 
             # Plot the steering angle for each version
             for ver_index in range(np.shape(steering_angles)[0]):
-                steer_end = calculate_endpoint(arrow_point, 200, steering_angles[ver_index, frame_id])
-                cv2.arrowedLine(resized_frame, arrow_point, steer_end, DATASET_COLORS[ver_index], 4, tipLength=0.3)
+                steer_ang = steering_angles[ver_index, frame_id]
+                if not np.isnan(steer_ang):
+                    steer_end = calculate_endpoint(arrow_point, 200, steer_ang)
+                    cv2.arrowedLine(resized_frame, arrow_point, steer_end, DATASET_COLORS[ver_index], 4, tipLength=0.3)
                 cv2.putText(resized_frame, version_names[ver_index], [10, (ver_index * 30) + 30], FONT, FONT_SCALE, DATASET_COLORS[ver_index], FONT_THICKNESS)
 
             # Write the resized frame to the output video
@@ -220,7 +223,10 @@ def determine_pass_fail(final_steering_angles, versions, failing_deg, passing_de
         if initialized:
 
             # Determine failures using the max_error
-            max_error = np.nanmax(differences[:, frame_id])
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                # Ignore all nan slice, as this will just result in all nans, resulting in false to both
+                max_error = np.nanmax(differences[:, frame_id])
 
             if max_error > failing_deg:
                 pass_fail_results[frame_id] = ScenarioDefinition.FAIL.value
@@ -233,9 +239,12 @@ def determine_pass_fail(final_steering_angles, versions, failing_deg, passing_de
     count_passing = np.count_nonzero(pass_fail_results == ScenarioDefinition.PASS.value)
 
     # Compute the mean, min, and max errors
-    min_error = np.nanmin(differences, axis=0)
-    avg_error = np.nanmean(differences, axis=0)
-    max_error = np.nanmax(differences, axis=0)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        # Ignore all nan slice, as this will just result in all nans
+        min_error = np.nanmin(differences, axis=0)
+        avg_error = np.nanmean(differences, axis=0)
+        max_error = np.nanmax(differences, axis=0)
 
     # Write the results to a file
     with open(f"{output_diff_file}", "w") as file:
@@ -245,7 +254,7 @@ def determine_pass_fail(final_steering_angles, versions, failing_deg, passing_de
         file.write(f"Passing: {count_passing}" + "\n")
         file.write(f"Unknowns: {count_unknown}" + "\n")
         for ver_index, ver in enumerate(versions):
-            file.write(f"v{ver_index}) {ver}")
+            file.write(f"v{ver_index}) {ver}\n")
         file.write("-------------------" + "\n")
 
         # Loop through the data and output if a frame is passing or failing
@@ -257,7 +266,6 @@ def determine_pass_fail(final_steering_angles, versions, failing_deg, passing_de
             # Add each of the readings
             for ver_index, ver in enumerate(versions):
                 line_output += f"(v{ver_index}:{np.round(final_steering_angles[ver_index][k],1)}) "
-
             # Add the min max and mean
             line_output += f"(mn:{np.round(min_error[k],1)}) "
             line_output += f"(av:{np.round(avg_error[k],1)}) "

@@ -362,7 +362,7 @@ class CarlaBridge:
       ])
 
       # Create a structured array with the data
-      data = np.array([(steer_op, self.camerad.frame_id, alert1, alert2)], dtype=dtype)
+      data = np.array([(steer_op, self._camerad.frame_id, alert1, alert2)], dtype=dtype)
 
       # Create the dataset with a suitable key
       h5_out.create_dataset("{0:09d}_data".format(write_counter), data=data)

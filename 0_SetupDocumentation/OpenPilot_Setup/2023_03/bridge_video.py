@@ -340,15 +340,31 @@ class CarlaBridge:
       throttle_op = steer_op = brake_op = 0.0
       throttle_manual = steer_manual = brake_manual = 0.0
 
+      # Update the sub master
       sm.update(0)
 
-      # TODO gas and brake is deprecated
-      throttle_op = clip(sm['carControl'].actuators.accel / 1.6, 0.0, 1.0)
-      brake_op = clip(-sm['carControl'].actuators.accel / 4.0, 0.0, 1.0)
+      # Get the steering angle
       steer_op = sm['carControl'].actuators.steeringAngleDeg
 
-      data = np.array([steer_op, self._camerad.frame_id])
-      h5_out.create_dataset("{0:09d}_steering_angle".format(write_counter), np.shape(data), dtype='f', data=data)
+      # Get the alerts
+      alert1 = sm["controlsState"].alertText1
+      alert2 = sm["controlsState"].alertText2
+
+      # Define a compound data type
+      dtype = np.dtype([
+          ('steering_angle', np.float32),
+          ('frame_id', np.int64),
+          ('alert1', h5py.string_dtype(encoding='utf-8')),
+          ('alert2', h5py.string_dtype(encoding='utf-8'))
+      ])
+
+      # Create a structured array with the data
+      data = np.array([(steer_op, self.camerad.frame_id, alert1, alert2)], dtype=dtype)
+
+      # Create the dataset with a suitable key
+      h5_out.create_dataset("{0:09d}_data".format(write_counter), data=data)
+
+      # Increment the write counter
       write_counter += 1
 
       # --------------Step 2-------------------------------

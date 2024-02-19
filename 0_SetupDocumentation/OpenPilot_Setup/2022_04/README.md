@@ -14,7 +14,7 @@ The laptop has:
 I installed basic programs
 ```bash
 sudo apt update -y && sudo apt upgrade -y
-sudo apt install git curl wget htop build-essential -y
+sudo apt install git curl wget htop build-essential ffmpeg -y
 ```
 
 If you haven't already you will also need to initialize git:

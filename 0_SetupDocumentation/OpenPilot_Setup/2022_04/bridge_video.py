@@ -284,24 +284,31 @@ def bridge(q, filename):
     throttle_op = steer_op = brake_op = 0
     throttle_manual = steer_manual = brake_manual = 0.0
 
+    # Update the sub master
     sm.update(0)
 
-    # TODO gas and brake is deprecated
-    accel_op = sm['carControl'].actuators.accel
-    brake_op = sm['carControl'].actuators.brake
-    throttle_op = sm['carControl'].actuators.gas
+    # Get the steering angle
     steer_op = sm['carControl'].actuators.steeringAngleDeg
+
+    # Get the alerts
     alert1 = sm["controlsState"].alertText1
     alert2 = sm["controlsState"].alertText2
 
-    if alert1 == "No Data from Device Sensors":
-      alert1 = ""
-    if alert2 == "Reboot your Device":
-      alert2 = ""
+    # Define a compound data type
+    dtype = np.dtype([
+        ('steering_angle', np.float32),
+        ('frame_id', np.int64),
+        ('alert1', h5py.string_dtype(encoding='utf-8')),
+        ('alert2', h5py.string_dtype(encoding='utf-8'))
+    ])
 
-    data = np.array([steer_op, camerad.frame_id])
-    h5_out.create_dataset("{0:09d}_steering_angle".format(write_counter), np.shape(data), dtype='f', data=data)
+    # Create a structured array with the data
+    data = np.array([(steer_op, camerad.frame_id, alert1, alert2)], dtype=dtype)
 
+    # Create the dataset with a suitable key
+    h5_out.create_dataset("{0:09d}_data".format(write_counter), data=data)
+
+    # Increment the write counter
     write_counter += 1
 
     # --------------Step 2-------------------------------

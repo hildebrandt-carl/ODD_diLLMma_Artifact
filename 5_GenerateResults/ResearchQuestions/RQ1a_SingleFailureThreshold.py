@@ -32,7 +32,7 @@ assert args.dataset in datasets, f"The dataset was not found in `{DATASET_DIRECT
 steering_file_paths = sorted(glob.glob(f"{DATASET_DIRECTORY}/{args.dataset}/3_OracleData/PassFailRepresentation/*.txt"))
 
 # Create the x-array
-x_values = np.arange(10, 720)
+x_values = np.arange(0, 720)
 y_values = None
 
 # For each of the files
@@ -90,14 +90,13 @@ for file in steering_file_paths:
         y_values = np.zeros((len(index_combinations), len(x_values)))
 
     # For each of the combinations
-    for comb_i, comb in enumerate(index_combinations):
+    for comb_index, comb in enumerate(index_combinations):
         i1, i2 = comb
         # Compute the difference
         error_array = np.abs(steering_data[i1] - steering_data[i2])
         # Populate the y_values
-        for i, x in enumerate(x_values):
-            y_values[comb_i,i] = y_values[comb_i,i] + np.sum(error_array >= x)
-
+        for x_index, x in enumerate(x_values):
+            y_values[comb_index, x_index] = y_values[comb_index, x_index] + np.sum(error_array >= x)
 
 # Get the labels
 labels = []

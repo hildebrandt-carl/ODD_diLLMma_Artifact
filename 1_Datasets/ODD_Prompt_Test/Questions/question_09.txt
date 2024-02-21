@@ -1,0 +1,19 @@
+1. **Weather Impact:** "Given the current weather conditions visible in the image, would the vehicle's visibility sensors likely face impairments?" [YES/NO]
+
+2. **Sensor Clarity:** "Based on the image, are there indications that the vehicle’s sensors might be blocked or obscured by external factors like mud or snow?" [YES/NO]
+
+3. **Curve Recognition:** "From the road layout visible, is there a sharp curve that the vehicle's navigation system needs to identify and respond to?" [YES/NO]
+
+4. **Ramp Accessibility:** "In the scenario depicted, is the vehicle required to adjust for an on-off ramp, indicating a need for specific navigational input?" [YES/NO]
+
+5. **Intersection Detection:** "Can the vehicle's systems detect and properly react to an intersection as shown in the image, considering required traffic signal compliance and cross-traffic awareness?" [YES/NO]
+
+6. **Special Lane Observance:** "Are there special lanes (e.g., for buses or bicycles) in view that the vehicle must recognize and respect according to traffic laws?" [YES/NO]
+
+7. **Construction Awareness:** "Does the image suggest the presence of a construction zone that would necessitate the vehicle's adjustment in speed and lane positioning?" [YES/NO]
+
+8. **Lighting Adaptation:** "Is the vehicle exposed to lighting conditions that could challenge the accuracy of its sensor readings, such as glare from the sun or headlights?" [YES/NO]
+
+9. **Navigating Complexity:** "Does the road's complexity, evidenced by narrowness or winding paths, require advanced maneuvering capabilities from the vehicle?" [YES/NO]
+
+10. **Terrain Adjustment:** "Considering the terrain shown, would the vehicle need to engage different driving modes or systems to handle hilly conditions effectively?" [YES/NO]

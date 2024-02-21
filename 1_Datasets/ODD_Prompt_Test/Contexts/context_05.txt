@@ -1,0 +1,8 @@
+**Safety and System Limitations Evaluation for Automated Driving Systems**
+
+The provided image comes from a front-facing camera on an automated vehicle. The goal is to conduct a comprehensive evaluation to ensure that the vehicle's operation remains within safe parameters and respects the limitations of its automated driving systems (ADS). The Operational Design Domain (ODD) for this vehicle encompasses specific conditions under which the ADS can safely and effectively operate. Evaluate the image against the following criteria to determine if the vehicle is operating within its ODD:
+
+<here>
+
+By carefully analyzing the image for these factors, we can assess the vehicle's adherence to its designated ODD, highlighting any conditions that might pose safety risks or exceed the system's operational capabilities. This evaluation is crucial for understanding the ADS's current functioning state and for making informed decisions regarding its continued operation or the need for manual intervention.
+

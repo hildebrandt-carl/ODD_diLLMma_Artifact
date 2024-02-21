@@ -1,0 +1,10 @@
+Visibility: [YES/NO] # Poor visibility due to heavy rain, snow, fog, or adverse weather.
+Camera Obstruction: [YES/NO] # Camera obstructed by mud, ice, snow, paint, or adhesive.
+Sharp Curve: [YES/NO] # Road on a sharp curve.
+On-Off Ramp: [YES/NO] # Road includes an on-off ramp.
+Intersection: [YES/NO] # Road at an intersection or runs horizontally.
+Restricted Lanes: [YES/NO] # Presence of restricted lanes (buses, bicycles).
+Construction: [YES/NO] # Construction on the road.
+Bright Lights: [YES/NO] # Extremely bright lights (headlights, sunlight).
+Narrow and Winding: [YES/NO] # Road is narrow and winding.
+Hilly Road: [YES/NO] # Road is hilly.

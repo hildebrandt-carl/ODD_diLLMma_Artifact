@@ -1,0 +1,19 @@
+1. **Weather Visibility:** "Poor visibility due to weather?" [YES/NO]
+   
+2. **Sensor Blockage:** "Sensors blocked?" [YES/NO]
+   
+3. **Sharp Curve:** "Sharp curve ahead?" [YES/NO]
+   
+4. **Ramp:** "On-off ramp present?" [YES/NO]
+   
+5. **Intersection:** "Intersection ahead?" [YES/NO]
+   
+6. **Lane Restrictions:** "Restricted lanes?" [YES/NO]
+   
+7. **Construction:** "Construction zone?" [YES/NO]
+   
+8. **Bright Lights:** "Extreme lighting?" [YES/NO]
+   
+9. **Winding Road:** "Narrow, winding road?" [YES/NO]
+   
+10. **Hilly Terrain:** "Hilly terrain?" [YES/NO]

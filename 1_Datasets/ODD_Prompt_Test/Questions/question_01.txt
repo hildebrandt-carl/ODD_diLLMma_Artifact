@@ -1,0 +1,20 @@
+- Question: "Does this image have poor visibility due to heavy rain, snow, fog, or adverse weather conditions?" 
+  Answer: [YES/NO]
+- Question: "Was the camera that took this image obstructed, covered, or damaged by mud, ice, snow, excessive paint, or adhesive products?" 
+  Answer: [YES/NO]
+- Question: "Is the road we are driving on a sharp curve?" 
+  Answer: [YES/NO]
+- Question: "Is the road we are driving on an on-off ramp?" 
+  Answer: [YES/NO]
+- Question: "Is the road we are driving on an intersection, or does it run horizontally across the image?" 
+  Answer: [YES/NO]
+- Question: "Does the road we are driving on have any restricted lanes, for example for buses, or bicycles?" 
+  Answer: [YES/NO]
+- Question: "Does the road we are driving on have any construction?" 
+  Answer: [YES/NO]
+- Question: "Are there any extremely bright lights from oncoming headlights, or direct sunlight into the camera?" 
+  Answer: [YES/NO]
+- Question: "Is the road we are driving on narrow and winding?" 
+  Answer: [YES/NO]
+- Question: "Is the road we are driving on hilly?" 
+  Answer: [YES/NO]

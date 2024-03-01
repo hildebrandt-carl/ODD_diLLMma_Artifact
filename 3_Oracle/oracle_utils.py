@@ -15,6 +15,29 @@ class ScenarioDefinition(Enum):
     PASS        = 0
     FAIL        = 1
 
+def get_video_length(video):
+    # Load the video and determine how many frames there are
+    cap = cv2.VideoCapture(video)
+    if not cap.isOpened():
+        print("Error: Could not open video.")
+        exit()
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    assert frame_count > 100, "Cant get the video frame count"
+    cap.release()
+    return frame_count
+
+def get_h5_length(filename):
+    key_length = -1
+    try:
+        f = h5py.File(filename, "r")
+        keys = f.keys()
+        key_length = len(keys)
+        f.close()
+    except Exception as e:
+        pass
+
+    return key_length
+
 
 def compute_average_steering_angle_per_frame(video_file, steering_files):
 

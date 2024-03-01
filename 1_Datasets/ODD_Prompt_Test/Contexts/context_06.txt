@@ -1,0 +1,3 @@
+Answer the following questions based on the image provided, using the template below:
+
+<here>

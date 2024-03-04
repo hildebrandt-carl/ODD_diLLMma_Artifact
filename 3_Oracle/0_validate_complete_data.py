@@ -1,13 +1,18 @@
 import os
-import glob
+import sys
 import math
+import glob
 import argparse
 
 
 from tqdm import tqdm
 
-from oracle_utils import get_h5_length
-from oracle_utils import get_video_length
+current_dir = os.path.dirname(__file__)
+data_loader_dir = "../Common"
+data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
+sys.path.append(data_loader_path)
+
+from data_loader import DataLoader
 
 
 # Get the folders
@@ -28,8 +33,8 @@ OPENPILOT_CONTROL_RATE = 5
 datasets = [d for d in os.listdir(DATASET_DIRECTORY) if os.path.isdir(os.path.join(DATASET_DIRECTORY, d))]
 datasets = sorted(datasets)
 print(f"Found {len(datasets)} datasets:")
-for i, dataset in enumerate(datasets):
-    print(f"{i}) {dataset}")
+for dataset_index, dataset in enumerate(datasets):
+    print(f"Dataset {dataset_index+1}) {dataset}")
 
 print("\n=====================")
 for dataset in datasets:
@@ -44,46 +49,30 @@ for dataset in datasets:
     # Get all the base video names
     base_filenames = [os.path.basename(video_file)[:-4] for video_file in video_files] 
 
-    # Find all the openpilot versions this dataset was run
-    # Get the list of versions
-    version_path = f"{DATASET_DIRECTORY}/{dataset}/2_SteeringData"
-    versions = [d for d in os.listdir(version_path) if os.path.isdir(os.path.join(version_path, d))]
-    versions = sorted(versions)
-    print(f"\tDataset has {len(versions)} OpenPilot versions")
-    
+    detected_versions = set()
+    success = 0
+
+    for filename in tqdm(base_filenames, desc="Processing Files", leave=False):
+        # Load the data
+        dl = DataLoader(filename=filename)
+
+        # Compare the number of versions for each filename
+        if len(detected_versions) == 0:
+            detected_versions = set(dl.versions)
+        else:
+            if set(dl.versions) != detected_versions:
+                print(f"\t\tWARNING: {filename} has {len(dl.versions)}/{len(detected_versions)} OpenPilot versions")
+
+        # Validate that each of the files and versions have the same number of readings as the video
+        validated = dl.validate_h5_files()
+        if validated:
+            success += 1
+
+    print(f"\tDataset has {len(detected_versions)} OpenPilot versions")
+    for version_index, version in enumerate(sorted(list(detected_versions))):
+        print(f"\t\t Version {version_index+1}: {version}")
+    print(f"\t{success}/{len(base_filenames)} had the excepted number of data points in them")
+
+
     print("\t----------------------------")
-    for version in versions:
-        print(f"\tValidating all videos in version: {version}")
-
-        h5_files = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/2_SteeringData/{version}/*.h5")
-        h5_files = sorted(h5_files)
-        warning_string = ""
-        if len(h5_files) != len(video_files):
-            warning_string = " -- WARNING: less data files than video files"
-        print(f"\t\tFound {len(h5_files)}/{len(video_files)} data files {warning_string}")
-    
-        incomplete_videos = ""
-        success = 0
-        
-        # Checking if each of the data files has data for each frame in the video
-        print("\t\tValidating each datafile has data for each frame in the video")
-        for filename in tqdm(base_filenames, desc="Comparing video and data files", leave=False):
-            
-            h5_f  = f"{DATASET_DIRECTORY}/{dataset}/2_SteeringData/{version}/{filename}.h5"
-            vid_f = f"{DATASET_DIRECTORY}/{dataset}/1_ProcessedData/{filename}.mp4"
-
-            video_length = get_video_length(vid_f)
-            h5_length    = get_h5_length(h5_f)
-            
-            if math.floor(h5_length/OPENPILOT_CONTROL_RATE) != video_length:
-                incomplete_videos += f"\t\tWARNING: {h5_f} is not the expected length {math.floor(h5_length/OPENPILOT_CONTROL_RATE)}/{video_length}\n"
-            else:
-                success += 1
-        
-        if len(incomplete_videos) > 0:
-            print(incomplete_videos[:-1])
-        print(f"\t\t{success}/{len(base_filenames)} had the excepted number of data points in them")
-
-
-        print("\t----------------------------")
     print("\n=====================")

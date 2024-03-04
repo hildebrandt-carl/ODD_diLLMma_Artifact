@@ -163,7 +163,7 @@ for key in itertools.cycle(keys):
             selected_failing_count += 1
 
 # Loop through the videos and save the images
-for key in tqdm(keys, desc="Processing File", total=len(keys), position=0, leave=False):
+for key in tqdm(keys, desc="Processing File", total=len(keys), position=0, leave=True):
 
     # Create the save directory
     save_dir = f"{DATASET_DIRECTORY}/4_SelectedData"

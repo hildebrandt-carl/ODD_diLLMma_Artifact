@@ -143,7 +143,7 @@ class DataLoader:
 
         self.readings = np.full((len(self.h5_filepaths), self.total_video_frames), np.nan)
 
-        for h5_file_index, h5_file in tqdm(enumerate(self.h5_filepaths), desc="Processing version", leave=False, total=len(self.h5_filepaths), position=0):
+        for h5_file_index, h5_file in tqdm(enumerate(self.h5_filepaths), desc="Processing version", leave=False, total=len(self.h5_filepaths), position=1):
             # Read the file
             h5_f = h5py.File(h5_file, 'r')
 
@@ -151,7 +151,7 @@ class DataLoader:
             current_frame_readings = []
 
             # For each key in the common set of keys
-            for key_index in tqdm(range(self.total_h5_readings), desc="Loading data from file", leave=False, total=self.total_h5_readings, position=1):
+            for key_index in tqdm(range(self.total_h5_readings), desc="Loading data from file", leave=False, total=self.total_h5_readings, position=2):
 
                 # Generate a key
                 index = "{0:09d}_data".format(key_index)

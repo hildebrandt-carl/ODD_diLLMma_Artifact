@@ -143,5 +143,3 @@ model/
 # misc
 .DS_Store
 *.key
-
-*.pkl

@@ -1,19 +1,11 @@
-1. **Weather-Related Visibility:** "Assess if adverse weather conditions (e.g., rain, snow, fog) are impacting visibility to a degree that might exceed the ADS's capability to detect and respond to road conditions." [YES/NO]
-
-2. **Sensor Obstructions:** "Determine if there are obstructions (e.g., mud, ice, debris) on the camera or other sensors that could impair the ADS's ability to accurately perceive the environment." [YES/NO]
-
-3. **Challenging Road Features:** "Identify if the vehicle is facing road features such as sharp curves or steep inclines that are known to challenge the precision of the ADS's navigation and control systems." [YES/NO]
-
-4. **Traffic Infrastructure Interaction:** "Verify whether the vehicle is approaching or navigating through complex traffic infrastructure like on-off ramps and intersections, which require sophisticated decision-making capabilities from the ADS." [YES/NO]
-
-5. **Compliance with Traffic Regulations:** "Check for the presence of restricted lanes or construction zones that necessitate an understanding of temporary traffic regulations and the ability to adapt routing accordingly." [YES/NO]
-
-6. **Exposure to Extreme Lighting:** "Evaluate if the scene includes extreme lighting conditions, such as direct sunlight or oncoming vehicle headlights, that could disrupt the ADS's sensor inputs." [YES/NO]
-
-7. **Operational Environment Complexity:** "Consider if the environment includes elements like narrow, winding roads or densely populated pedestrian areas that demand high levels of contextual awareness from the ADS." [YES/NO]
-
-8. **Lane Restrictions:** "Are there visible lane restrictions, like bus or bike lanes, that the vehicle must recognize and respect?" [YES/NO]
-
-9. **Narrow and Winding Road Adaptation:** "Does the image reveal a narrow and winding road ahead, requiring the vehicle's enhanced maneuvering and stability control systems to maintain safe operation?" [YES/NO]
-
-10. **Hilly Terrain Navigation:** "Is the vehicle operating in hilly terrain as shown in the image, engaging the vehicle's power management and braking systems more intensively?" [YES/NO]
+- [YES/NO] **Visibility Issue:** Is the image showing poor visibility due to weather conditions (like heavy rain, snow, fog) that could affect sensor operation?
+- [YES/NO] **Camera Obstruction:** Is the camera obstructed by materials (paint, mud, ice, etc.)?
+- [YES/NO] **Sharp Curve:** Does the image depict a sharp curve in the road?
+- [YES/NO] **Ramp:** Is this an on/off ramp in the road?
+- [YES/NO] **Intersection:** Are we looking at an intersection?
+- [YES/NO] **Restricted Lanes:** Does the road have visible restricted lanes?
+- [YES/NO] **Construction Zone:** Is there a construction zone in the image?
+- [YES/NO] **Banking Road:** Is the road highly banked?
+- [YES/NO] **Bright Light:** Does bright light (headlights, sunlight) compromise visibility in the image?
+- [YES/NO] **Narrow/Winding Road:** Is the road narrow or winding?
+- [YES/NO] **Hill:** Is the road on a hill?

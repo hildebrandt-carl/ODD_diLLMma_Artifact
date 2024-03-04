@@ -1,10 +1,13 @@
-q00) Does this image have poor visibility like heavy rain, snow, fog, or adverse weather conditions?
-q01) Was the camera that took this image obstructed, covered, or damaged by mud, ice, snow, excessive paint or adhesive products?
-q02) Is the road we are driving on a sharp curve?
-q03) Is the road we are driving on an on-off ramp?
-q04) Is the road we are driving on an intersection, or does it run horizontally across the image?
-q05) Does the road we are driving have any restricted lanes, for example for buses, or bicycles?
-q06) Does the road we are driving on have any construction?
-q07) Are there any extremely bright lights from oncoming headlights, or direct sunlight into the camera?
-q08) Is the road we are driving on narrow and winding?
-q09) Is the road we are driving on hilly?
+The image is from a front-facing camera in a car. Answer the following questions based on the image provided, using the template below:
+
+Q01: Does this image have poor visibility (heavy rain, snow, fog, etc.) or weather conditions that may interfere with sensor operation? - [YES/NO]
+Q02: Was the camera that took this image obstructed including by excessive paint or adhesive products (such as wraps, stickers, rubber coating, etc.), covered or damaged by mud, ice, snow, etc? - [YES/NO]
+Q03: Is the road we are driving on a sharp curve? - [YES/NO]
+Q04: Is the road we are driving on an on-off ramp? - [YES/NO]
+Q05: Is the road we are driving on an intersection? - [YES/NO]
+Q06: Does the road in this image have restricted lanes? - [YES/NO]
+Q07: Does the road in this image have construction zones? - [YES/NO]
+Q08: Is the road we are driving on highly banked?- [YES/NO]
+Q09: Does this image have bright light (due to oncoming headlights, direct sunlight, etc.)? - [YES/NO]
+Q10: Is the road we are driving on narrow or winding? - [YES/NO]
+Q11: Is the road we are driving on a hill? - [YES/NO]

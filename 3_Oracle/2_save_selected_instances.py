@@ -133,8 +133,9 @@ for f in pass_fail_files:
     passing_images[video_name] = (passing_ids)
     failing_images[video_name] = (failing_ids)
 
-# Prepare a list of keys
+# Prepare a list of keys (randomly order the keys)
 keys = sorted(list(set(passing_images.keys()) | set(failing_images.keys())))
+random.shuffle(keys)
 
 # Create the list of images we are going to save
 selected_passing_images = defaultdict(list)

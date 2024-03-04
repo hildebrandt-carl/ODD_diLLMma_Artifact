@@ -1,19 +1,11 @@
-1. **Reduced Visibility:** "Is visibility compromised by adverse weather such as rain, fog, or snow in the image?" [YES/NO]
-
-2. **Sensor Blockage:** "Are the vehicle's sensors obstructed by mud, ice, or other materials, as shown in the image?" [YES/NO]
-
-3. **Curve Navigation:** "Does the image depict a sharp curve requiring advanced vehicle maneuvering?" [YES/NO]
-
-4. **Ramp Handling:** "Is the vehicle approaching or on a ramp, necessitating speed and lane adjustments?" [YES/NO]
-
-5. **Intersection Management:** "Does the image include an intersection requiring complex decision-making by the vehicle?" [YES/NO]
-
-6. **Lane Restrictions:** "Are there visible lane restrictions, like bus or bike lanes, that the vehicle must adhere to?" [YES/NO]
-
-7. **Construction Zones:** "Is there ongoing construction impacting lane availability or traffic flow in the image?" [YES/NO]
-
-8. **Light Conditions:** "Are extreme lighting conditions present, potentially affecting sensor performance?" [YES/NO]
-
-9. **Winding Roads:** "Does the road ahead twist and turn, challenging the vehicle's stability and steering?" [YES/NO]
-
-10. **Hilly Terrain:** "Is the terrain hilly, requiring adjustments in the vehicle's power and braking systems?" [YES/NO]
+- **Adverse Weather Visibility:** "[YES/NO] 'The image shows reduced visibility due to adverse weather conditions affecting sensor functionality.' Do you agree?"
+- **Camera Obstruction:** "[YES/NO] 'The camera's view is obstructed by substances such as paint, mud, or ice.' Is this correct?"
+- **Sharp Curve Presence:** "[YES/NO] 'The road depicted in the image includes a sharp curve.' Can you confirm?"
+- **On/Off Ramp Visibility:** "[YES/NO] 'This is an image of an on/off ramp.' Would you agree?"
+- **Intersection Identification:** "[YES/NO] 'An intersection is clearly visible in the image.' Is this accurate?"
+- **Restricted Lanes Detection:** "[YES/NO] 'Restricted lanes are identifiable in this image.' Do you see them?"
+- **Construction Zone Observation:** "[YES/NO] 'There is a construction zone present in the scene.' Is this observation correct?"
+- **Significant Road Banking:** "[YES/NO] 'The road shown is highly banked.' Do you agree with this statement?"
+- **Bright Light Impact:** "[YES/NO] 'Bright lights in the image could affect visibility.' Would you say this is true?"
+- **Narrow/Winding Road Confirmation:** "[YES/NO] 'The road looks narrow or winding.' Is this your observation as well?"
+- **Hill Road Acknowledgment:** "[YES/NO] 'The road is situated on a hill.' Can you confirm this?"

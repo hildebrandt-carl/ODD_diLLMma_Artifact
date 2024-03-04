@@ -42,7 +42,7 @@ def find_non_overlapping_sequences(difference_array, threshold, length, comparis
 parser = argparse.ArgumentParser(description="Used to identify which scenarios pass and which fail")
 parser.add_argument('--failing_deg',
                     type=int,
-                    default=90,
+                    default=45,
                     help="Any difference greater than this is considered a failure")
 parser.add_argument('--passing_deg',
                     type=int,

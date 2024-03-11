@@ -216,7 +216,7 @@ individual_human_datasets = sorted(individual_human_datasets)
 
 # Holds the data
 data = {}
-all_filenames_set = set()
+all_filenames_sets = []
 
 # Get coverage vectors for all the available datasets
 for ind_human in individual_human_datasets:
@@ -230,7 +230,13 @@ for ind_human in individual_human_datasets:
     data[ind_human]["filenames"] = filenames
 
     # Tracks all filenames
-    all_filenames_set.update(filenames)
+    all_filenames_sets.append(set(filenames))
+
+# Make sure all the datasets are the same size:
+for i in range(1, len(all_filenames_sets)):
+    assert all_filenames_sets[0] == all_filenames_sets[i], f"Labeled files in {individual_human_datasets[0]} does not match labeled files in {individual_human_datasets[i]}"
+
+all_filenames_set = all_filenames_sets[0]
     
 # Only worry about files we have not yet processed
 files_to_process_set = all_filenames_set ^ existing_files_set

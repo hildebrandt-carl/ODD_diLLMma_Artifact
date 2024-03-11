@@ -20,8 +20,6 @@ from constants import ODD
 # Decare the dataset directory
 DATASET_DIRECTORY = "../1_Datasets/Data"
 
-
-
 def resize_image(image_path, new_size=None):
     image = Image.open(image_path)
     if new_size:
@@ -83,7 +81,7 @@ root = tk.Tk()
 root.title(f"Annotating {args.dataset}")
 
 # Create the output directory and declare the input directory
-OUTPUT_DIR = f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions/{args.author_name}"
+OUTPUT_DIR = f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions/Individual_Human/{args.author_name}"
 INPUT_DIR  = f"{DATASET_DIRECTORY}/{args.dataset}/4_SelectedData"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -137,3 +135,7 @@ load_next_image()
 
 # Start the GUI event loop
 root.mainloop()
+
+
+# Update it so that it only display checkboxes it has loaded.
+# Update the other code to go under individual folder

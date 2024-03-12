@@ -1,0 +1,11 @@
+- **Adverse Weather Visibility:** [YES/NO] Agree that the image shows reduced visibility due to adverse weather conditions affecting sensor functionality.
+- **Camera Obstruction:** [YES/NO] Agree that the camera's view is obstructed by substances like paint, mud, or ice.
+- **Sharp Curve Presence:** [YES/NO] Agree that the image depicts a sharp curve in the road.
+- **On/Off Ramp Visibility:** [YES/NO] Agree that this is an image of an on/off ramp.
+- **Intersection Identification:** [YES/NO] Agree that an intersection is visible in the image.
+- **Restricted Lanes Detection:** [YES/NO] Agree that restricted lanes are identifiable in this image.
+- **Construction Zone Observation:** [YES/NO] Agree that there is a construction zone present in the scene.
+- **Significant Road Banking:** [YES/NO] Agree that the road shown is highly banked.
+- **Bright Light Impact:** [YES/NO] Agree that bright lights in the image could affect visibility.
+- **Narrow/Winding Road Confirmation:** [YES/NO] Agree that the road looks narrow or winding.
+- **Hill Road Acknowledgment:** [YES/NO] Agree that the road is situated on a hill.

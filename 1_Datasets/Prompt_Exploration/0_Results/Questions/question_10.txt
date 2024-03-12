@@ -1,0 +1,33 @@
+1. **Visibility in Adverse Weather**  
+   QUESTION: "Is the visibility in this image significantly reduced due to adverse weather conditions affecting sensor functionality?"  
+   ANSWER: [YES/NO]
+2. **Camera Obstruction**  
+   QUESTION: "Does the image indicate that the camera's view is obstructed by materials such as paint, mud, or ice?"  
+   ANSWER: [YES/NO]
+3. **Presence of a Sharp Curve**  
+   QUESTION: "Is the road depicted in the image featuring a sharp curve?"  
+   ANSWER: [YES/NO]
+4. **On/Off Ramp Scenario**  
+   QUESTION: "Is the scenario depicted in the image that of an on/off ramp?"  
+   ANSWER: [YES/NO]
+5. **Intersection Visibility**  
+   QUESTION: "Is there an intersection clearly visible in the image?"  
+   ANSWER: [YES/NO]
+6. **Detection of Restricted Lanes**  
+   QUESTION: "Are restricted lanes identifiable in the image?"  
+   ANSWER: [YES/NO]
+7. **Construction Zone Observation**  
+   QUESTION: "Does the image include a visible construction zone?"  
+   ANSWER: [YES/NO]
+8. **Road Banking Assessment**  
+   QUESTION: "Is the road shown in the image highly banked?"  
+   ANSWER: [YES/NO]
+9. **Impact of Bright Light**  
+   QUESTION: "Does bright light in the image potentially compromise visibility?"  
+   ANSWER: [YES/NO]
+10. **Narrow or Winding Road Inquiry**  
+   QUESTION: "Based on the image, would you describe the road as narrow or winding?"  
+   ANSWER: [YES/NO]
+11. **Hill Road Consideration**  
+   QUESTION: "Based on your observation of the image, is the road situated on a hill?"  
+   ANSWER: [YES/NO]

@@ -1,0 +1,3 @@
+The image is from a front-facing camera in a car. Answer the following questions based on the image provided, using the template below:
+
+<here>

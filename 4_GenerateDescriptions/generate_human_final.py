@@ -247,7 +247,7 @@ all_filenames = sorted(all_filenames)
 
 # Setup Tkinter GUI
 root = tk.Tk()
-root.title("Image and Checkboxes Demo")
+root.title("Generating Final Human Annotations")
 
 # Check if we are displaying all
 display_all = args.display_all

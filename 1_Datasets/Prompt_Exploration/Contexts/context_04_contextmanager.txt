@@ -1,5 +1,0 @@
-The image provided is from a front-facing camera mounted on a car. The objective is to determine whether the car is operating within its specified Operational Design Domain (ODD). The ODD is defined by the capability of the vehicle's automated driving system to function under certain conditions. To assess compliance, review the image in the context of the following questions:
-
-<here>
-
-These questions are designed to systematically assess whether the vehicle is operating within environments and conditions for which it was designed. The answers will help determine if the current situation falls within the car's ODD, ensuring that the automated driving system is functioning in its intended operational environment.

@@ -139,6 +139,7 @@ model/
 
 # Too big
 1_Datasets/Data
+1_Datasets/Prompt_Exploration/0_Results
 
 # misc
 .DS_Store

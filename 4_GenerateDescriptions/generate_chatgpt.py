@@ -12,7 +12,7 @@ DATASET_DIRECTORY = "../1_Datasets/Data"
 API_KEY_DIRECTORY = "./API_Keys"
 
 # Set the number of retries
-MAX_RETRY = 5
+MAX_RETRY = 10
 
 # Function to encode the image
 def encode_image(image_path):
@@ -67,25 +67,13 @@ parser.add_argument('--api_key',
 parser.add_argument('--dataset',
                     type=str,
                     required=True,
-                    choices=["OpenPilot_2k19", "External_jutah", "OpenPilot_2016"],
-                    help="The dataset you want to process (OpenPilot_2k19, External_jutah, OpenPilot_2016)")
-parser.add_argument('--size',
-                    type=int,
-                    default=-1,
-                    help="The size of the dataset you want to use")
+                    choices=["External_Jutah", "OpenPilot_2k19", "OpenPilot_2016"],
+                    help="The dataset you want to process (External_Jutah, OpenPilot_2k19, OpenPilot_2016)")
 parser.add_argument('--odd_file',
                     type=str,
-                    default="ODD_Converted.txt",
+                    default="Described_ODD.txt",
                     help="The name of the odd file you want to use")
-parser.add_argument('--portion',
-                    type=str,
-                    required=True,
-                    choices=["pass", "fail", "both"],
-                    help="Select which type of files you want to use (pass, fail, both)")
 args = parser.parse_args()
-
-# Make sure you have set a dataset size
-assert args.size > 0, "Dataset size can not be less than or equal to 0"
 
 # Get the list of databases
 datasets = os.listdir(DATASET_DIRECTORY)
@@ -98,30 +86,23 @@ assert os.path.exists(api_key_file) == True, f"API key file '{api_key_file}' doe
 # Load the prompts
 with open(f'../1_Datasets/ODD/{args.odd_file}', 'r') as file:
     # Read the content of the file
-    data = file.read()
+    prompt = file.read()
 
-# Get each of the questions
-odd = data.split("\n")
-odd_clean = []
+print("Using Prompt:")
+print("=====================")
+print(prompt)
+print("=====================")
 
-# Clean the data
-for q in odd:
-    number = q[:q.find(")")]
-    question = q[q.find(")")+2:]
-    odd_clean.append((number, question))
 
-    # Make sure the directories for this number
-    output_dir = f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions_{args.size}/chat_gpt/{number}"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+INPUT_DIR  = f"{DATASET_DIRECTORY}/{args.dataset}/4_SelectedData"
+OUTPUT_DIR = f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions/ChatGPT_Base"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Load all images
-if args.portion == "both":
-    all_images = sorted(glob.glob(f"{DATASET_DIRECTORY}/{args.dataset}/4_SelectedData_{args.size}/*.png"))
-elif args.portion == "pass" or args.portion == "fail":
-    all_images = sorted(glob.glob(f"{DATASET_DIRECTORY}/{args.dataset}/4_SelectedData_{args.size}/{args.portion}_*.png"))
+all_images = sorted(glob.glob(f"{INPUT_DIR}/*.png"))
+
 # Load all the descriptions
-all_descriptions = sorted(glob.glob(f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions_{args.size}/chat_gpt/*/*.txt"))
+all_descriptions = sorted(glob.glob(f"{OUTPUT_DIR}/*.txt"))
 
 # For each image
 for img in tqdm(all_images):
@@ -129,69 +110,66 @@ for img in tqdm(all_images):
     # Get the image basename
     basename = os.path.basename(img)
 
-    # For each element of the ODD
-    for odd_number, odd_prompt in odd_clean:
+    # Check if we already have this:
+    output_txt_file = f"{OUTPUT_DIR}/{basename[:-4]}_output.txt"
+    output_json_file = f"{OUTPUT_DIR}/{basename[:-4]}_json.txt"
 
-        # Check if we already have this:
-        output_txt_file = f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions_{args.size}/chat_gpt/{odd_number}/{basename[:-4]}_output.txt"
-        output_json_file = f"{DATASET_DIRECTORY}/{args.dataset}/5_Descriptions_{args.size}/chat_gpt/{odd_number}/{basename[:-4]}_json.txt"
+    # Figure out if we have seen this before
+    if output_txt_file in all_descriptions:
+        continue
 
-        # Figure out if we have seen this before
-        if output_txt_file in all_descriptions:
-            continue
+    # Repeat this step until it works
+    current_retry = 0
+    while current_retry < MAX_RETRY:
 
-        # Repeat this step until it works
-        current_retry = 0
-        while current_retry < MAX_RETRY:
+        # Create the payload and send it
+        headers, payload = create_request(img, prompt, api_key_file)
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-            # Create the payload and send it
-            headers, payload = create_request(img, odd_prompt, api_key_file)
-            response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+        # Get the response
+        response_data = response.json()
+
+        # Check if 'choices' key exists in the response
+        if 'choices' in response_data:
 
             # Get the response
-            response_data = response.json()
+            response_text = response_data["choices"][0]["message"]["content"]
 
-            # Check if 'error' key exists in the response
-            if 'error' in response_data:
-                # Handle the error
-                print(f"Error detected: Retry attempt {current_retry+1}/{MAX_RETRY}")
-                print(f"Error message: {response_data}")
+            # Open the file in write mode ('w'). If the file doesn't exist, it will be created.
+            with open(f"{output_txt_file}", 'w') as file:
+                # Write the text to the file
+                file.write(response_text)
 
-                # Get the current datetime
-                now = datetime.datetime.now()
-                datetime_str = now.strftime("%Y%m%d_%H%M%S")
+            # Open the file in write mode ('w'). If the file doesn't exist, it will be created.
+            with open(f"{output_json_file}", 'w') as file:
+                # Write the text to the file
+                file.write(str(response_data))
 
-                # Open the file in write mode ('w'). If the file doesn't exist, it will be created.
-                with open(f'error_{datetime_str}.txt', 'w') as file:
-                    # Write the text to the file
-                    file.write(str(response_data))
+            current_retry = 0
+            break
 
-                # Retry
-                current_retry += 1
-                if current_retry < MAX_RETRY:
-                    wait_time = 90 * current_retry
-                    print(f"Waiting {wait_time} seconds")
-                    time.sleep(wait_time)
-                    continue
+        # Else save the response
+        else:
+            # Handle the error
+            print(f"Error detected: Retry attempt {current_retry+1}/{MAX_RETRY}")
+            print(f"Error message: {response_data}")
 
-            # Check if 'error' key exists in the response
-            elif 'choices' in response_data:
+            # Get the current datetime
+            now = datetime.datetime.now()
+            datetime_str = now.strftime("%Y%m%d_%H%M%S")
 
-                # Get the response
-                response_text = response_data["choices"][0]["message"]["content"]
+            # Open the file in write mode ('w'). If the file doesn't exist, it will be created.
+            with open(f'error_{datetime_str}.txt', 'w') as file:
+                # Write the text to the file
+                file.write(str(response_data))
 
-                # Open the file in write mode ('w'). If the file doesn't exist, it will be created.
-                with open(f"{output_txt_file}", 'w') as file:
-                    # Write the text to the file
-                    file.write(response_text)
-
-                # Open the file in write mode ('w'). If the file doesn't exist, it will be created.
-                with open(f"{output_json_file}", 'w') as file:
-                    # Write the text to the file
-                    file.write(str(response_data))
-
-                current_retry = 0
-                break
+            # Retry
+            current_retry += 1
+            if current_retry < MAX_RETRY:
+                wait_time = 90 * current_retry
+                print(f"Waiting {wait_time} seconds")
+                time.sleep(wait_time)
+                continue
 
         if current_retry >= MAX_RETRY:
             exit()

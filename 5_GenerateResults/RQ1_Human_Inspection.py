@@ -66,10 +66,7 @@ for dataset in available_datasets:
         # Load the coverage vector
         dl = DescriptionLoader(failing_descriptions)
         # Get the indices which are flagged as in ODD or unknown
-        in_odd_indices  = np.where(np.all(dl.coverage_vector == 0, axis=1))[0]
-        unknown_indices = np.where(np.any(dl.coverage_vector == -1, axis=1))[0]
-        # Holds all indices which require inspection
-        require_inspection_indices = np.concatenate((in_odd_indices, unknown_indices))
+        require_inspection_indices  = np.where(np.all(dl.coverage_vector == 0, axis=1))[0]
         # Get the associated filenames
         filenames_requiring_inspection = dl.get_filenames_from_indices(require_inspection_indices)
         # Save this information
@@ -84,10 +81,7 @@ for dataset in available_datasets:
     # Load the coverage vector
     dl = DescriptionLoader(failing_descriptions)
     # Get the indices which are flagged as in ODD or unknown
-    in_odd_indices  = np.where(np.all(dl.coverage_vector == 0, axis=1))[0]
-    unknown_indices = np.where(np.any(dl.coverage_vector == -1, axis=1))[0]
-    # Holds all indices which require inspection
-    require_inspection_indices = np.concatenate((in_odd_indices, unknown_indices))
+    require_inspection_indices  = np.where(np.all(dl.coverage_vector == 0, axis=1))[0]
     # Get the associated filenames
     filenames_requiring_inspection = dl.get_filenames_from_indices(require_inspection_indices)
     # Save this information
@@ -127,16 +121,14 @@ total_failures = [len(num_failures) for num_failures in human_in_odd_filenames]
 # print(total_images)
 # print(total_failures)
 
-
 colors = ['C0', 'C1', 'C2', 'C3']
 shapes = ['o', 's', '^'] 
-
 
 # Create a figure
 plt.figure(figsize=(17, 12))
 
 # Create broken axes
-bax = brokenaxes(ylims=((-1, 31), (89, 101)), xlims=((-1, 31), (89, 101)), despine=False)
+bax = brokenaxes(ylims=((-1, 31), (69, 101)), xlims=((-1, 31), (69, 101)), despine=False)
 
 for i in range(3):
     for j in range(4):
@@ -161,9 +153,9 @@ human_line = mlines.Line2D([], [], color='red', linestyle='dashed', linewidth=6)
 color_legend.append(human_line)
 
 # Add legends to the plot
-legend1 = plt.legend(shape_legend, ['comma.ai 2016', 'comma.ai 2k19', 'JUtah'], loc='upper left', fontsize=35)
+legend1 = plt.legend(shape_legend, available_datasets, loc='upper left', fontsize=35)
 plt.gca().add_artist(legend1)  # Add the first legend manually
-plt.legend(color_legend, ['Vicuna', 'Llama 2', 'ChatGPT-4V', 'Human'], loc='lower right', fontsize=35)
+plt.legend(color_legend, common_annotators + ["Human"], loc='lower right', fontsize=35)
 
 # Customize the plot
 bax.set_xlabel('Images Requiring Human Inspection (%)', fontsize=35, labelpad=50)

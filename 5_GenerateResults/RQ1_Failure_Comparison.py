@@ -23,6 +23,10 @@ parser.add_argument('--annotator',
                     choices=['Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base'],
                     required=True,
                     help="The annotator to use. Choose between 'Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base'.")
+parser.add_argument('--description_filter',
+                    choices=['Both', 'Pass', 'Fail'],
+                    required=True,
+                    help="Filter results by status: 'Both' to include both passing and failing, 'Pass' for passing only, or 'Fail' for failing only.")
 parser.add_argument('--dataset_directory',
                     type=str,
                     default="../1_Datasets/Data",
@@ -45,11 +49,18 @@ unknown_count_array = []
 
 # For each of the datasets
 for dataset in available_datasets:
-    # Get all the failing files
-    failing_descriptions = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/5_Descriptions/{args.annotator}/fail_*_output.txt")
+
+
+    # Get all the files based on the filter:
+    if args.description_filter == "Both":
+        descriptions = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/5_Descriptions/{args.annotator}/*_output.txt")
+    elif args.description_filter == "Pass":
+        descriptions = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/5_Descriptions/{args.annotator}/pass_*_output.txt")
+    elif args.description_filter == "Fail":
+        descriptions = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/5_Descriptions/{args.annotator}/fail_*_output.txt")
 
     # Load the coverage vector
-    dl = DescriptionLoader(failing_descriptions)
+    dl = DescriptionLoader(descriptions)
     
     # Count the number in ODD/ out ODD/ and unknown
     in_odd_count  = np.sum(np.all(dl.coverage_vector == 0, axis=1))
@@ -86,7 +97,7 @@ plt.grid(which='minor', linestyle='--', linewidth='0.5', color='gray')
 bar_inside = plt.bar(available_datasets,
                      in_odd_count_array,
                      label='Inside ODD',
-                     color='C0',
+                     color='C3',
                      edgecolor='black',
                      linewidth=5)
 
@@ -109,7 +120,7 @@ bar_outside = plt.bar(available_datasets,
                       out_odd_count_array,
                       bottom=bottom_for_outside,
                       label='Outside ODD',
-                      color='C3',
+                      color='C0',
                       edgecolor='black',
                       linewidth=5)
 
@@ -123,7 +134,7 @@ for dataset_index, dataset_name in enumerate(available_datasets):
 
     # Position label for 'Inside ODD'
     text = plt.text(dataset_index, base_height, '%d' % base_height,
-                    ha='left', va='bottom', fontsize=50, color="C0")
+                    ha='left', va='bottom', fontsize=50, color="C3")
     text.set_path_effects(text_path_effects)
 
     if np.any(unknown_count_array > 0):
@@ -141,7 +152,7 @@ for dataset_index, dataset_name in enumerate(available_datasets):
     outside_height = out_odd_count_array[dataset_index]
     cum_height_for_outside = base_height + outside_height
     text = plt.text(dataset_index, cum_height_for_outside, '%d' % outside_height,
-                    ha='center', va='bottom', fontsize=50, color="C3")
+                    ha='center', va='bottom', fontsize=50, color="C0")
     text.set_path_effects(text_path_effects)
 
 # Setting tick and label size

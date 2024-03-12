@@ -73,6 +73,12 @@ for context in contexts:
 
         # Compare it to the human baseline
         # Compare what????
+            # Hamming 0.25
+            # Cosine 0.25
+            # Percentage Match 0.25
+            # Jaccard?? 0.25
+            # Find the one which works best
+        # Changing the how we do the parsing will change things here!!!!!
         # Plot the results
 
 

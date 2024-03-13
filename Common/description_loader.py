@@ -91,7 +91,6 @@ class DescriptionLoader:
         vector_list = []
         file_lines = []
         answer_dict = {}
-        bad = False
         question_regex = re.compile(r'.*Q(\d+)(.*)')
         with open(filename, 'r') as file:
             for index, line in enumerate(file):
@@ -103,8 +102,9 @@ class DescriptionLoader:
                         answer = DescriptionLoader.parse_answer(match.groups()[1])
                         if answer is None:
                             continue
-                        if question in answer_dict:
-                            bad = True
+                        if question in answer_dict and answer_dict[question] != answer:
+                            # if it re-stated the question and gave a different answer, overwrite with -1
+                            answer = -1
                         answer_dict[question] = answer
                 except ValueError:
                     pass
@@ -121,7 +121,7 @@ class DescriptionLoader:
                 if "NO" in line:
                     vector_list.append(0)
 
-        if len(vector_list) == odd_length and not bad:
+        if len(vector_list) == odd_length:
             return np.array(vector_list)
         else:
             # print(filename)

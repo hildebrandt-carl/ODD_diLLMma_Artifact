@@ -115,14 +115,40 @@ for item_index, item in enumerate(number_of_true_in_odd_failures):
 total_images = [len(failing_descriptions) for dataset in available_datasets]
 total_failures = [len(num_failures) for num_failures in human_in_odd_filenames]
 
-# At this point we have the following
+# # At this point we have the following
 # print(number_of_human_inspection)
 # print(number_of_true_in_odd_failures)
 # print(total_images)
 # print(total_failures)
 
-colors = ['C0', 'C1', 'C2', 'C3']
-shapes = ['o', 's', '^'] 
+percentage_human_inspections_all_array = []
+percentage_failures_found_all_array = []
+
+for annotator_index, annotator in enumerate(common_annotators):
+    print(f"Annotator: {annotator}")
+    percentage_human_inspections_array = []
+    percentage_failures_found_array = []
+    for dataset_index, dataset in enumerate(available_datasets):
+
+        # Compute percentages
+        percentage_human_inspections = (number_of_human_inspection[dataset_index][annotator_index] / total_images[dataset_index]) * 100
+        percentage_failures_found = (number_of_true_in_odd_failures[dataset_index][annotator_index] / total_failures[dataset_index]) * 100
+        percentage_human_inspections_array.append(percentage_human_inspections)
+        percentage_failures_found_array.append(percentage_failures_found)
+        print(f"\tDataset: {dataset}")
+        print(f"\t\tPercentage Human Inspection {np.round(percentage_human_inspections,2)}%")
+        print(f"\t\tPercentage Failures Found {np.round(percentage_failures_found,2)}%")
+
+    percentage_human_inspections_all_array.append(percentage_human_inspections_array)
+    percentage_failures_found_all_array.append(percentage_failures_found_array)
+
+# At this point we have the following
+# print(percentage_human_inspections_array)
+# print(percentage_failures_found_array)
+
+# Declare the dataset shapes
+dataset_shapes = ['o', 's', '^'] 
+annotator_colors = [f"C{i}" for i in range(len(common_annotators))]
 
 # Create a figure
 plt.figure(figsize=(17, 12))
@@ -130,21 +156,25 @@ plt.figure(figsize=(17, 12))
 # Create broken axes
 bax = brokenaxes(ylims=((-1, 41), (69, 101)), xlims=((-1, 41), (69, 101)), despine=False)
 
-for i in range(3):
-    for j in range(4):
+for annotator_index, annotator in enumerate(common_annotators):
+    for dataset_index, dataset in enumerate(available_datasets):
         # Set the color and shape
-        s = shapes[i]
-        c = colors[j]
+        s = dataset_shapes[dataset_index]
+        c = f"C{annotator_index}"
 
-        bax.scatter((number_of_human_inspection[i][j]/total_images[i])*100, (number_of_true_in_odd_failures[i][j]/total_failures[i])*100, marker=s, color=c, s=1000)
+        bax.scatter(percentage_human_inspections_all_array[annotator_index][dataset_index],
+                    percentage_failures_found_all_array[annotator_index][dataset_index],
+                    marker=s,
+                    color=c,
+                    s=1000)
 
 
 x = np.arange(100)
 bax.plot(x, x, linestyle="dashed", color='C3', linewidth=6)
 
 # Create custom legends
-shape_legend = [mlines.Line2D([0], [0], color='black', marker=shape, linestyle='None', markersize=35) for shape in shapes]
-color_legend = [mpatches.Patch(color=color) for color in colors[:3]]
+shape_legend = [mlines.Line2D([0], [0], color='black', marker=shape, linestyle='None', markersize=35) for shape in dataset_shapes]
+color_legend = [mpatches.Patch(color=color) for color in annotator_colors]
 
 # Custom line for 'Human' with dashed red line
 human_line = mlines.Line2D([], [], color='red', linestyle='dashed', linewidth=6)

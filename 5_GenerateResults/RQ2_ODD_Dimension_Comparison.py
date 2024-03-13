@@ -57,6 +57,7 @@ elif args.description_filter == "Fail":
     descriptions = sorted(glob.glob(f"{DATASET_DIRECTORY}/5_Descriptions/Human/fail_*_output.txt"))
 baseline_dl = DescriptionLoader(descriptions)
 
+print("Computing accuracy per dimension:")
 accuracy_per_dimension_array = []
 for annotator in available_annotators:
 
@@ -104,16 +105,23 @@ for annotator in available_annotators:
     # Compute the accuracy
     numerator               = (true_negatives + true_positives)
     denominator             = (true_negatives + true_positives + false_positives + false_negatives) 
-    accuracy_per_dimension  = numerator / denominator
+    accuracy_per_dimension  = (numerator / denominator) * 100
 
     # Save the data 
     accuracy_per_dimension_array.append(accuracy_per_dimension)
     
+    # Print the data
+    print(f"\nAnnotator: {annotator}")
+    for i, odd in enumerate(ODD.keys()):
+        print(f"{odd} Accuracy: {np.round(accuracy_per_dimension[i], 2)}%")
+
+
+
 # Wrap the compliance vectors around for plotting
-f1_score_per_dimension_wrapped = []
-for f1_scores in accuracy_per_dimension_array:
-    value = np.append(f1_scores, f1_scores[:1])
-    f1_score_per_dimension_wrapped.append(value)
+accuracy_per_dimension_array_wrapped = []
+for accuracy in accuracy_per_dimension_array:
+    value = np.append(accuracy, accuracy[:1])
+    accuracy_per_dimension_array_wrapped.append(value)
 
 # Define the number of variables
 odd_keys = ODD.keys()
@@ -132,17 +140,17 @@ plt.get_current_fig_manager().set_window_title(f'{args.description_filter}')
 # Plot data
 for i in range(len(available_annotators)):
     annotator = available_annotators[i]
-    f1_scores = f1_score_per_dimension_wrapped[i]
-    ax.plot(angles, f1_scores, linewidth=10, linestyle='solid', label=annotator.replace("_", " "))
-    ax.fill(angles, f1_scores, f'C{i}', alpha=0.1)
+    accuracy = accuracy_per_dimension_array_wrapped[i]
+    ax.plot(angles, accuracy, linewidth=10, linestyle='solid', label=annotator.replace("_", " "))
+    ax.fill(angles, accuracy, f'C{i}', alpha=0.1)
 
 # Draw one axe per variable and add labels
 plt.xticks(angles[:-1], [o.replace(' ', '\n') for o in odd_keys], verticalalignment='center')
 
 # Set the label axes
 ax.set_rlabel_position(30)
-plt.yticks([0, .25, .5, .75, 1], ["0", ".25", ".5", ".75", "1"], color="grey", size=30)
-plt.ylim(0, 1)
+plt.yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", "100"], color="grey", size=30)
+plt.ylim(0, 100)
 plt.tick_params(axis='x', labelsize=45, pad=50)
 
 plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), fontsize=45)

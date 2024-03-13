@@ -65,6 +65,12 @@ for dataset in available_datasets:
     # Save the compliance
     compliance_per_datasets.append(compliance_per_dimension)
 
+    # Print the data
+    print(f"\nDataset: {dataset}")
+    for i, odd in enumerate(ODD.keys()):
+        print(f"{odd} Accuracy: {np.round(compliance_per_dimension[i], 2)}%")
+
+
 # Wrap the compliance vectors around for plotting
 compliance_per_annotator_wrapped = []
 for compliance in compliance_per_datasets:

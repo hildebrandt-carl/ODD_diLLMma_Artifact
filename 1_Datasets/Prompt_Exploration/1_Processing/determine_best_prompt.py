@@ -44,8 +44,12 @@ human_baselines = [os.path.basename(f) for f in human_baselines_paths]
 human_baselines = sorted(human_baselines)
 assert len(human_baselines) > 0, "Human baseline not detected"
 
-# Load the human data
-human_dl = DescriptionLoader(human_baselines_paths)
+# # Load the human data
+# human_dl = DescriptionLoader(human_baselines_paths)
+# bool_arr = (human_dl.coverage_vector == -1)
+# rows_with_minus_one = np.any(bool_arr, axis=1)
+# count = np.sum(rows_with_minus_one)
+# print(f"Human number of unknowns: {count}/{np.shape(human_dl.coverage_vector)[0]}")
 
 # Get all the prompt combinations
 questions_paths = glob.glob(f"{PROMPT_EXPLORATION_DIRECTORY}/Questions/*.txt")
@@ -66,10 +70,20 @@ for context in contexts:
         # Get the descriptions
         search_directory = f"{PROMPT_EXPLORATION_DIRECTORY}/Data/{args.dataset}/5_Descriptions_Subset/{args.annotator}/{context.lower()}/{question.lower()}/*_output.txt"
         descriptions = glob.glob(search_directory)
+
+        if len(descriptions) == 0:
+            continue
+
         assert len(descriptions) > 0, f"The following does not have descriptions {context}/{question}"
 
         # Load the data
         dl = DescriptionLoader(descriptions)
+
+        bool_arr = (dl.coverage_vector == -1)
+        rows_with_minus_one = np.all(bool_arr, axis=1)
+        count = np.sum(rows_with_minus_one)
+
+        print(f"{context} - {question} of unknowns: {count}/{np.shape(dl.coverage_vector)[0]}")
 
         # Compare it to the human baseline
         # Compare what????
@@ -81,5 +95,3 @@ for context in contexts:
         # Changing the how we do the parsing will change things here!!!!!
         # Plot the results
 
-
-    

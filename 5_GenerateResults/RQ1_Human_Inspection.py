@@ -54,7 +54,7 @@ common_annotators.discard("Individual_Human") # Remove Individual_Human
 common_annotators.discard("Human") # Remove Individual_Human
 common_annotators = sorted(list(common_annotators))
 
-# Step1 A: Compute all filenames which are flagged as unknown or in ODD by the annotator
+# Step1 A: Compute all filenames which are flagged as in ODD by the annotator
 human_inspection_filenames = []
 for dataset in available_datasets:
     # Keep track of this datasets requiring human inspection
@@ -65,7 +65,7 @@ for dataset in available_datasets:
         failing_descriptions = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/5_Descriptions/{annotator}/fail_*_output.txt")
         # Load the coverage vector
         dl = DescriptionLoader(failing_descriptions)
-        # Get the indices which are flagged as in ODD or unknown
+        # Get the indices which are flagged as in ODD
         require_inspection_indices  = np.where(np.all(dl.coverage_vector == 0, axis=1))[0]
         # Get the associated filenames
         filenames_requiring_inspection = dl.get_filenames_from_indices(require_inspection_indices)
@@ -80,7 +80,7 @@ for dataset in available_datasets:
     failing_descriptions = glob.glob(f"{DATASET_DIRECTORY}/{dataset}/5_Descriptions/Human/fail_*_output.txt")
     # Load the coverage vector
     dl = DescriptionLoader(failing_descriptions)
-    # Get the indices which are flagged as in ODD or unknown
+    # Get the indices which are flagged as in ODD
     require_inspection_indices  = np.where(np.all(dl.coverage_vector == 0, axis=1))[0]
     # Get the associated filenames
     filenames_requiring_inspection = dl.get_filenames_from_indices(require_inspection_indices)
@@ -128,7 +128,7 @@ shapes = ['o', 's', '^']
 plt.figure(figsize=(17, 12))
 
 # Create broken axes
-bax = brokenaxes(ylims=((-1, 31), (69, 101)), xlims=((-1, 31), (69, 101)), despine=False)
+bax = brokenaxes(ylims=((-1, 41), (69, 101)), xlims=((-1, 41), (69, 101)), despine=False)
 
 for i in range(3):
     for j in range(4):
@@ -153,9 +153,12 @@ human_line = mlines.Line2D([], [], color='red', linestyle='dashed', linewidth=6)
 color_legend.append(human_line)
 
 # Add legends to the plot
-legend1 = plt.legend(shape_legend, available_datasets, loc='upper left', fontsize=35)
-plt.gca().add_artist(legend1)  # Add the first legend manually
-plt.legend(color_legend, common_annotators + ["Human"], loc='lower right', fontsize=35)
+available_datasets_labels = [dset.replace("_", " ") for dset in available_datasets]
+legend1 = plt.legend(shape_legend, available_datasets_labels, loc='upper left', fontsize=35)
+plt.gca().add_artist(legend1)  
+common_annotators_labels = [ann.replace("_", " ") for ann in common_annotators]
+common_annotators_labels += ["Human"]
+plt.legend(color_legend, common_annotators_labels, loc='lower right', fontsize=35)
 
 # Customize the plot
 bax.set_xlabel('Images Requiring Human Inspection (%)', fontsize=35, labelpad=50)
@@ -166,5 +169,6 @@ bax.tick_params(axis='both', which='major', labelsize=30)
 # Show the grid
 bax.grid()
 
+plt.savefig("RQ1_Human_Inspection.png")
 plt.show()
 plt.close()

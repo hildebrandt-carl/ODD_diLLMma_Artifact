@@ -20,9 +20,9 @@ from description_loader import DescriptionLoader
 parser = argparse.ArgumentParser(description="Displays the number of failure inducing inputs")
 parser.add_argument('--annotator',
                     type=str,
-                    choices=['Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base'],
+                    choices=['Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base', 'Llama_Plus', 'Vicuna_Plus'],
                     required=True,
-                    help="The annotator to use. Choose between 'Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base'.")
+                    help="The annotator to use. Choose between 'Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base', 'Llama_Plus', 'Vicuna_Plus'.")
 parser.add_argument('--description_filter',
                     choices=['Both', 'Pass', 'Fail'],
                     required=True,
@@ -169,5 +169,6 @@ plt.ylim([0, dl.total_descriptions])
 
 # Display the plot
 plt.tight_layout()
+plt.savefig(f"RQ1_Failure_Comparison_{args.annotator}_{args.description_filter}.png")
 plt.show()
 plt.close()

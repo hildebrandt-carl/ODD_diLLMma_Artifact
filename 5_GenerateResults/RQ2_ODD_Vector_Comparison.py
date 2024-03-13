@@ -57,7 +57,7 @@ elif args.description_filter == "Fail":
     descriptions = sorted(glob.glob(f"{DATASET_DIRECTORY}/5_Descriptions/Human/fail_*_output.txt"))
 baseline_dl = DescriptionLoader(descriptions)
 
-accuracy_per_dimension_array = []
+f1_score_per_dimension = []
 for annotator in available_annotators:
 
     all_annotator_descriptions = []
@@ -95,57 +95,44 @@ for annotator in available_annotators:
     true = copy.deepcopy(human_dl.coverage_vector)
     pred = copy.deepcopy(annotator_dl.coverage_vector)
 
-    # Compute the total number true positives, false positives, and false negatives
-    true_negatives  = np.sum((true == 0) & (pred == 0), axis=0)
-    true_positives  = np.sum((true == 1) & (pred == 1), axis=0)
-    false_positives = np.sum((true == 0) & ((pred == 1) | (pred == -1)), axis=0)
-    false_negatives = np.sum((true == 1) & ((pred == 0) | (pred == -1)), axis=0)
+    # Compute some metrics
+    exact_match_vectors = np.all(true == pred, axis=1)
+    matching_rows_count = np.sum(exact_match_vectors)
 
-    # Compute the accuracy
-    numerator               = (true_negatives + true_positives)
-    denominator             = (true_negatives + true_positives + false_positives + false_negatives) 
-    accuracy_per_dimension  = numerator / denominator
+    # Find the true in and out of ODD
+    true_out_odd = np.any(true == 1, axis=1)
+    true_out_odd_count = np.sum(true_out_odd)
+    true_in_odd = np.all(true == 0, axis=1)
+    true_in_odd_count = np.sum(true_in_odd)
 
-    # Save the data 
-    accuracy_per_dimension_array.append(accuracy_per_dimension)
+    # Find how many predictions were correct
+    correct_out_odd_pred_count = np.sum(np.any(pred[true_out_odd] == 1, axis=1))
+    correct_in_odd_pred_count  = np.sum(np.all(pred[true_in_odd] == 0, axis=1))
     
-# Wrap the compliance vectors around for plotting
-f1_score_per_dimension_wrapped = []
-for f1_scores in accuracy_per_dimension_array:
-    value = np.append(f1_scores, f1_scores[:1])
-    f1_score_per_dimension_wrapped.append(value)
+    # Total in and out of ODD predictions
+    correct_in_out_pred_count = correct_out_odd_pred_count + correct_in_odd_pred_count
 
-# Define the number of variables
-odd_keys = ODD.keys()
-num_vars = len(odd_keys)
+    # Print the data
+    print(f"Annotator: {annotator}")
+    print(f"Total annotations: {np.shape(true)[0]}")
+    print(f"Correctly identified (In/Out of ODD): {correct_in_out_pred_count}/{np.shape(true)[0]}")
+    print(f"In ODD correctly identified: {correct_in_odd_pred_count}/{true_in_odd_count}")
+    print(f"Out of ODD correctly identified: {correct_out_odd_pred_count}/{true_out_odd_count}")
+    print(f"Exact ODD dimensions match: {matching_rows_count}/{np.shape(true)[0]}")
+    print("")
 
-# Compute angle for each axis
-angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-angles += angles[:1] # Repeat the first angle to close the circle
 
-# Initialize the spider plot
-fig, ax = plt.subplots(figsize=(20, 16), subplot_kw=dict(polar=True))
+# ChatGPT_Base == 586/1500
+# ChatGPT_Base in ODD 294/739
+# ChatGPT_Base out ODD 657/761
+# ChatGPT_Base total match 951/1500
 
-# Set the name
-plt.get_current_fig_manager().set_window_title(f'{args.description_filter}')
+# Llama_Base == 167/1500
+# Llama_Base in ODD 148/739
+# Llama_Base out ODD 607/761
+# Llama_Base total match 755/1500
 
-# Plot data
-for i in range(len(available_annotators)):
-    annotator = available_annotators[i]
-    f1_scores = f1_score_per_dimension_wrapped[i]
-    ax.plot(angles, f1_scores, linewidth=10, linestyle='solid', label=annotator.replace("_", " "))
-    ax.fill(angles, f1_scores, f'C{i}', alpha=0.1)
-
-# Draw one axe per variable and add labels
-plt.xticks(angles[:-1], [o.replace(' ', '\n') for o in odd_keys], verticalalignment='center')
-
-# Set the label axes
-ax.set_rlabel_position(30)
-plt.yticks([0, .25, .5, .75, 1], ["0", ".25", ".5", ".75", "1"], color="grey", size=30)
-plt.ylim(0, 1)
-plt.tick_params(axis='x', labelsize=45, pad=50)
-
-plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), fontsize=45)
-plt.tight_layout()
-plt.savefig(f"RQ2_ODD_Dimension_Comparison_{args.description_filter}.png")
-plt.show()
+# Vicuna_Base == 577/1500
+# Vicuna_Base in ODD 573/739
+# Vicuna_Base out ODD 111/761
+# Vicuna_Base total match 684/1500

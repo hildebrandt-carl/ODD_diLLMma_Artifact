@@ -75,6 +75,12 @@ video_filenames = sorted(video_filenames)
 passing_images = defaultdict(list)
 failing_images = defaultdict(list)
 
+# Compute the total number of frames,
+total_frames         = 0
+total_failing_frames = 0
+total_passing_frames = 0
+total_unknown_frames = 0
+
 for video_filename in tqdm(video_filenames, desc="Processing Video", leave=False, position=0, total=len(video_filenames)):
     # Load the data
     dl = DataLoader(filename=video_filename)
@@ -102,10 +108,21 @@ for video_filename in tqdm(video_filenames, desc="Processing Video", leave=False
     # Remove all frame ID's before the first steering angle
     failing_frame_ids = failing_frame_ids[failing_frame_ids >= first_steering_index]
     passing_frame_ids = passing_frame_ids[passing_frame_ids >= first_steering_index]
+
+    # Track the number of frames
+    current_total_images_count   = np.shape(steering_difference)[0]
+    current_failing_images_count = np.shape(failing_frame_ids)[0] * args.length
+    current_passing_images_count = np.shape(passing_frame_ids)[0] * args.length
+    current_unknown_images_count = current_total_images_count - (current_failing_images_count + current_passing_images_count)
+    total_frames                 += current_total_images_count
+    total_failing_frames         += current_failing_images_count
+    total_passing_frames         += current_passing_images_count
+    total_unknown_frames         += current_unknown_images_count
     
     # Display the data
-    print(f"{video_filename} has: {np.shape(passing_frame_ids)[0]}/{np.shape(steering_difference)[0]} passing images")
-    print(f"{video_filename} has: {np.shape(failing_frame_ids)[0]}/{np.shape(steering_difference)[0]} failing images")
+    print(f"{video_filename} has: {current_passing_images_count}/{current_total_images_count} passing images")
+    print(f"{video_filename} has: {current_failing_images_count}/{current_total_images_count} failing images")
+    print(f"{video_filename} has: {current_unknown_images_count}/{current_total_images_count} unknown images")
 
     # Save them into dictionaries
     for pass_id in passing_frame_ids:
@@ -123,6 +140,12 @@ for video_filename in video_filenames:
     pass_count += len(passing_images[video_filename])
 print(f"Total Failing Instances: {fail_count}")
 print(f"Total Passing Instances: {pass_count}")
+
+print("")
+print(f"Total Frames: {total_frames}")
+print(f"Total Failing Frames: {total_failing_frames}")
+print(f"Total Passing Frames: {total_passing_frames}")
+print(f"Total Unknown Frames: {total_unknown_frames}")
 
 # Create the save dir
 save_dir = f"{DATASET_DIRECTORY}/3_PassFail"

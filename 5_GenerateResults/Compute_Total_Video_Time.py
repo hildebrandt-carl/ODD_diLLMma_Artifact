@@ -82,6 +82,6 @@ minutes = (int(all_dataset_time) % 3600) // 60
 seconds = int(all_dataset_time) % 60
 
 print("\n\n============================")
-print(f"Total Time for all datasets in Seconds: {total_time}")
+print(f"Total Time for all datasets in Seconds: {all_dataset_time}")
 print(f"Total Time for all datasets (HH:MM:SS): {hours:02d}:{minutes:02d}:{seconds:02d}\n\n")
 print("============================")

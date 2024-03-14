@@ -154,7 +154,7 @@ annotator_colors = [f"C{i}" for i in range(len(common_annotators))]
 plt.figure(figsize=(17, 12))
 
 # Create broken axes
-bax = brokenaxes(ylims=((-1, 41), (69, 101)), xlims=((-1, 41), (69, 101)), despine=False)
+bax = brokenaxes(ylims=((-1, 41), (59, 101)), xlims=((-1, 41), (59, 101)), despine=False)
 
 for annotator_index, annotator in enumerate(common_annotators):
     for dataset_index, dataset in enumerate(available_datasets):

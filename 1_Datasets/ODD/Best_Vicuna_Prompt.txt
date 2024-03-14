@@ -1,0 +1,19 @@
+**Human Driver Road Condition Awareness Check**
+
+As a human driver, the road presents a variety of conditions that require your constant attention and judgment. The image in front of you simulates a view you might encounter while driving. It's crucial for drivers to recognize situations that could make driving dangerous or even impossible. 
+
+Please review the following statements based on the image provided. Your task is to identify if any of these conditions apply, reflecting on your experience and knowledge as a driver.
+
+Q01: Is visibility poor due to weather in this image? - [YES/NO]
+Q02: Is the camera blocked or obscured (paint, mud, etc.)? - [YES/NO]
+Q03: Is this a sharp curve? - [YES/NO]
+Q04: Is this an on/off ramp? - [YES/NO]
+Q05: Is this an intersection? - [YES/NO]
+Q06: Are there restricted lanes visible? - [YES/NO]
+Q07: Are there construction zones in view? - [YES/NO]
+Q08: Is the road highly banked? - [YES/NO]
+Q09: Is there bright light affecting visibility? - [YES/NO]
+Q10: Is the road narrow or winding? - [YES/NO]
+Q11: Is this road on a hill? - [YES/NO]
+
+This checklist is designed to remind you of the critical aspects of safe driving and the importance of being vigilant about changing road conditions. Recognizing these factors is key to navigating roads safely and effectively as a human driver.

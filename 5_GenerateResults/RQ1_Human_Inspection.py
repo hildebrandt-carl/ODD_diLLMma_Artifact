@@ -156,7 +156,7 @@ plt.figure(figsize=(14, 10))
 for annotator_index, annotator in enumerate(common_annotators):
     for dataset_index, dataset in enumerate(available_datasets):
 
-        edge_color = 'none' if "Plus" in annotator else ANNOTATOR_COLOR[annotator]
+        edge_color = ANNOTATOR_COLOR[annotator]
         fill_color = 'none' if "Base" in annotator else ANNOTATOR_COLOR[annotator]
 
         plt.scatter(percentage_human_inspections_all_array[annotator_index][dataset_index],

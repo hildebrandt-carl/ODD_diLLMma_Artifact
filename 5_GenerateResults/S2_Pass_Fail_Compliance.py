@@ -6,7 +6,6 @@ import argparse
 import numpy as np
 
 
-
 # Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
@@ -15,7 +14,9 @@ sys.path.append(data_loader_path)
 
 from prettytable import ALL
 from prettytable import PrettyTable
+from constants import DATASET_ORDER
 from description_loader import DescriptionLoader
+
 
 # Get the Data
 parser = argparse.ArgumentParser(description="Generates a table with the number of in and out of ODD datapoints there are")
@@ -44,7 +45,7 @@ table.field_names = ["Dataset Filter", "Dataset Name", "In ODD Count", "Out ODD 
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 # List the types we want to find
 description_filter_types = ["Full Dataset", "Failing Data", "Passing Data"]

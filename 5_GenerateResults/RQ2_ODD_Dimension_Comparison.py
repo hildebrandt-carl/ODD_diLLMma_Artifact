@@ -17,6 +17,10 @@ data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
 from constants import ODD
+from constants import DATASET_ORDER
+from constants import ANNOTATOR_LINES
+from constants import ANNOTATOR_COLOR
+from constants import ANNOTATOR_NAMING
 from description_loader import DescriptionLoader
 
 
@@ -39,7 +43,7 @@ DATASET_DIRECTORY = args.dataset_directory
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 # Get all the available annotator
 available_annotators_paths = glob.glob(f"{DATASET_DIRECTORY}/*/5_Descriptions/*")
@@ -132,7 +136,7 @@ angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
 angles += angles[:1] # Repeat the first angle to close the circle
 
 # Initialize the spider plot
-fig, ax = plt.subplots(figsize=(20, 16), subplot_kw=dict(polar=True))
+fig, ax = plt.subplots(figsize=(23, 18), subplot_kw=dict(polar=True))
 
 # Set the name
 plt.get_current_fig_manager().set_window_title(f'{args.description_filter}')
@@ -141,19 +145,34 @@ plt.get_current_fig_manager().set_window_title(f'{args.description_filter}')
 for i in range(len(available_annotators)):
     annotator = available_annotators[i]
     accuracy = accuracy_per_dimension_array_wrapped[i]
-    ax.plot(angles, accuracy, linewidth=10, linestyle='solid', label=annotator.replace("_", " "))
-    ax.fill(angles, accuracy, f'C{i}', alpha=0.1)
+    ax.plot(angles, accuracy, linewidth=10, linestyle=ANNOTATOR_LINES[annotator], c=ANNOTATOR_COLOR[annotator], label=ANNOTATOR_NAMING[annotator])
+    ax.fill(angles, accuracy, c=ANNOTATOR_COLOR[annotator], alpha=0.1)
 
 # Draw one axe per variable and add labels
 plt.xticks(angles[:-1], [o.replace(' ', '\n') for o in odd_keys], verticalalignment='center')
 
 # Set the label axes
 ax.set_rlabel_position(30)
-plt.yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", "100"], color="grey", size=30)
+plt.yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", ""], color="black", size=40)
 plt.ylim(0, 100)
 plt.tick_params(axis='x', labelsize=45, pad=50)
 
-plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), fontsize=45)
+
+# Reorder the handles
+handles, labels = ax.get_legend_handles_labels()
+desired_order = ['Llama 2', 'Llama 2+', 'Vicuna', 'Vicuna+', 'ChatGPT-4V']
+label_handle_map = dict(zip(labels, handles))
+ordered_handles = [label_handle_map[label] for label in desired_order if label in label_handle_map]
+
+# Use the reordered handles and labels in plt.legend()
+plt.legend(ordered_handles, desired_order, loc='upper center', bbox_to_anchor=(0.5, -0.12), fontsize=45, ncol=3)
 plt.tight_layout()
-plt.savefig(f"RQ2_ODD_Dimension_Comparison_{args.description_filter}.png")
+plt.subplots_adjust(bottom=0.2) 
+# plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), fontsize=45, ncol=3)
+
+
+os.makedirs("./output_graphs", exist_ok=True)
+plt.savefig(f"./output_graphs/RQ2_ODD_Dimension_Comparison_{args.description_filter}.png")
+plt.savefig(f"./output_graphs/RQ2_ODD_Dimension_Comparison_{args.description_filter}.svg")
+plt.savefig(f"./output_graphs/RQ2_ODD_Dimension_Comparison_{args.description_filter}.pdf")
 plt.show()

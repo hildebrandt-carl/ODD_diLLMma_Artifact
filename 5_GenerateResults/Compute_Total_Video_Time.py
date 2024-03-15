@@ -1,9 +1,21 @@
-import cv2
 import os
+import sys
+import cv2
 import glob
 import argparse
 
 from tqdm import tqdm
+
+
+# Import Common
+current_dir = os.path.dirname(__file__)
+data_loader_dir = "../Common"
+data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
+sys.path.append(data_loader_path)
+
+
+from constants import DATASET_ORDER
+
 
 
 def get_video_length(video_path):
@@ -42,7 +54,7 @@ DATASET_DIRECTORY = f"{args.dataset_directory}"
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 all_dataset_time = 0
 

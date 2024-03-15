@@ -5,7 +5,9 @@ import argparse
 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.patheffects as PathEffects
+import matplotlib.lines as mlines
+import matplotlib.patches as mpatches
+
 
 # Import Common
 current_dir = os.path.dirname(__file__)
@@ -16,13 +18,14 @@ sys.path.append(data_loader_path)
 from functools import reduce
 from description_loader import DescriptionLoader
 
-import matplotlib.pyplot as plt
-import matplotlib.lines as mlines
-import matplotlib.patches as mpatches
-import numpy as np
-import matplotlib.pyplot as plt
-from brokenaxes import brokenaxes
-import numpy as np
+from constants import DATASET_ORDER
+from constants import DATASET_SHAPE
+from constants import DATASET_NAMING
+from constants import ANNOTATOR_COLOR
+from constants import ANNOTATOR_NAMING
+
+
+
 
 # Get the Data
 parser = argparse.ArgumentParser(description="Displays the number of failure inducing inputs")
@@ -39,7 +42,8 @@ DATASET_DIRECTORY = f"{args.dataset_directory}"
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
+
 
 # Get all the available annotators
 available_annotator_sets = []
@@ -146,35 +150,38 @@ for annotator_index, annotator in enumerate(common_annotators):
 # print(percentage_human_inspections_array)
 # print(percentage_failures_found_array)
 
-# Declare the dataset shapes
-dataset_shapes = ['o', 's', '^'] 
-annotator_colors = [f"C{i}" for i in range(len(common_annotators))]
-
 # Create a figure
-plt.figure(figsize=(17, 12))
-
-# Create broken axes
-bax = brokenaxes(ylims=((-1, 41), (59, 101)), xlims=((-1, 41), (59, 101)), despine=False)
+plt.figure(figsize=(14, 10))
 
 for annotator_index, annotator in enumerate(common_annotators):
     for dataset_index, dataset in enumerate(available_datasets):
-        # Set the color and shape
-        s = dataset_shapes[dataset_index]
-        c = f"C{annotator_index}"
 
-        bax.scatter(percentage_human_inspections_all_array[annotator_index][dataset_index],
+        edge_color = 'none' if "Plus" in annotator else ANNOTATOR_COLOR[annotator]
+        fill_color = 'none' if "Base" in annotator else ANNOTATOR_COLOR[annotator]
+
+        plt.scatter(percentage_human_inspections_all_array[annotator_index][dataset_index],
                     percentage_failures_found_all_array[annotator_index][dataset_index],
-                    marker=s,
-                    color=c,
-                    s=1000)
+                    marker=DATASET_SHAPE[dataset],
+                    color=fill_color,
+                    edgecolor=edge_color,
+                    linewidth=6,
+                    s=500)
 
 
 x = np.arange(100)
-bax.plot(x, x, linestyle="dashed", color='C3', linewidth=6)
+plt.plot(x, x, linestyle="dashed", color='C3', linewidth=6)
 
-# Create custom legends
-shape_legend = [mlines.Line2D([0], [0], color='black', marker=shape, linestyle='None', markersize=35) for shape in dataset_shapes]
-color_legend = [mpatches.Patch(color=color) for color in annotator_colors]
+# Create custom shape legend
+shape_legend = [mlines.Line2D([0], [0], color='black', marker=DATASET_SHAPE[dset], linestyle='None', markersize=35) for dset in available_datasets]
+
+# Create the color legend
+color_legend = []
+for ann in common_annotators:
+    if "Base" in ann:  
+        patch = mpatches.Patch(edgecolor=ANNOTATOR_COLOR[ann], facecolor='none', linewidth=4)  
+    else:
+        patch = mpatches.Patch(color=ANNOTATOR_COLOR[ann])  # Regular filled patch
+    color_legend.append(patch)
 
 # Custom line for 'Human' with dashed red line
 human_line = mlines.Line2D([], [], color='red', linestyle='dashed', linewidth=6)
@@ -183,22 +190,30 @@ human_line = mlines.Line2D([], [], color='red', linestyle='dashed', linewidth=6)
 color_legend.append(human_line)
 
 # Add legends to the plot
-available_datasets_labels = [dset.replace("_", " ") for dset in available_datasets]
+available_datasets_labels = [DATASET_NAMING[dset] for dset in available_datasets]
 legend1 = plt.legend(shape_legend, available_datasets_labels, loc='upper left', fontsize=35)
 plt.gca().add_artist(legend1)  
-common_annotators_labels = [ann.replace("_", " ") for ann in common_annotators]
+common_annotators_labels = [ANNOTATOR_NAMING[ann] for ann in common_annotators]
 common_annotators_labels += ["Human"]
 plt.legend(color_legend, common_annotators_labels, loc='lower right', fontsize=35)
 
 # Customize the plot
-bax.set_xlabel('Images Requiring Human Inspection (%)', fontsize=35, labelpad=50)
-bax.set_ylabel('Failure-Inducing Inputs in ODD (%)', fontsize=35, labelpad=50)
+plt.xlabel('Images Requiring Human Inspection (%)', fontsize=35, labelpad=50)
+plt.ylabel('Failure-Inducing Inputs in ODD (%)', fontsize=35, labelpad=50)
 
-bax.tick_params(axis='both', which='major', labelsize=30)
+
+plt.xticks(np.arange(0,101,10))
+plt.yticks(np.arange(0,101,10))
+
+plt.tick_params(axis='both', which='major', labelsize=30)
 
 # Show the grid
-bax.grid()
+plt.grid()
+plt.tight_layout()
 
-plt.savefig("RQ1_Human_Inspection.png")
+os.makedirs("./output_graphs", exist_ok=True)
+plt.savefig("./output_graphs/RQ1_Human_Inspection.pdf")
+plt.savefig("./output_graphs/RQ1_Human_Inspection.png")
+plt.savefig("./output_graphs/RQ1_Human_Inspection.svg")
 plt.show()
 plt.close()

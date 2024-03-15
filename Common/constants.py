@@ -13,3 +13,40 @@ ODD = {"Poor Visibility": "Does this image have poor visibility (heavy rain, sno
        "Bright Light": "Does this image have bright light (due to oncoming headlights, direct sunlight, etc.)?",
        "Narrow Road": "Is the road we are driving on narrow or winding?",
        "Hilly Road": "Is the road we are driving on a hill?"}
+
+ANNOTATOR_NAMING = {"ChatGPT_Base": "ChatGPT-4V",
+                    "Llama_Base": "Llama 2",
+                    "Llama_Plus": "Llama 2+",
+                    "Vicuna_Base": "Vicuna",
+                    "Vicuna_Plus": "Vicuna+",
+                    "Human": "Human"}
+
+ANNOTATOR_COLOR = {"ChatGPT_Base": "C0",
+                   "Llama_Base": "C1",
+                   "Llama_Plus": "C1",
+                   "Vicuna_Base": "C2",
+                   "Vicuna_Plus": "C2",
+                   "Human": "C3"}
+
+ANNOTATOR_LINES = {"ChatGPT_Base": "solid",
+                   "Llama_Base": "solid",
+                   "Llama_Plus": "dashed",
+                   "Vicuna_Base": "solid",
+                   "Vicuna_Plus": "dashed",
+                   "Human": "solid"}
+
+DATASET_NAMING = {"OpenPilot_2016": "comma.ai 2016",
+                  "OpenPilot_2k19": "comma.ai 2k19",
+                  "External_Jutah": "External JUtah"}
+
+DATASET_SHAPE = {"OpenPilot_2016": "o",
+                 "OpenPilot_2k19": "s",
+                 "External_Jutah": "^"}
+
+DATASET_COLOR = {"OpenPilot_2016": "C6",
+                 "OpenPilot_2k19": "C5",
+                 "External_Jutah": "C7"}
+
+DATASET_ORDER = {"OpenPilot_2016": "1",
+                 "OpenPilot_2k19": "2",
+                 "External_Jutah": "3"}

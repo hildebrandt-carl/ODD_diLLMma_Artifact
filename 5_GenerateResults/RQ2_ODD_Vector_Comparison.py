@@ -16,7 +16,8 @@ data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
-from constants import ODD
+from constants import DATASET_ORDER
+from constants import ANNOTATOR_NAMING
 from description_loader import DescriptionLoader
 
 
@@ -39,7 +40,7 @@ DATASET_DIRECTORY = args.dataset_directory
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 # Get all the available annotator
 available_annotators_paths = glob.glob(f"{DATASET_DIRECTORY}/*/5_Descriptions/*")
@@ -137,7 +138,7 @@ in_out_odd_bar_array = np.array(in_out_odd_bar_array)
 exact_match_array = np.array(exact_match_array)
 
 # Create the figure
-plt.figure(figsize=(10,8))
+plt.figure(figsize=(12,9))
 
 # Assuming data definitions are given above
 barWidth = 0.3
@@ -146,8 +147,8 @@ r1 = np.arange(len(available_annotators)) - gap / 2
 r2 = [x + barWidth + gap for x in r1]
 
 # Definitions for colors and hatches
-left_stack_labels = ['Inside ODD Identified', 'Outside ODD Identified', 'Inside ODD Missed', 'Outside ODD Missed']
-right_stack_labels = ['Exact ODD Match', 'ODD Match Missed']
+left_stack_labels = ['In-ODD Match', 'Out-ODD Match', 'In-ODD Missed', 'Out-ODD Missed']
+right_stack_labels = ['ODD Match', 'ODD Missed']
 
 left_colors             = ['C0', 'C3', 'None', 'none']
 left_hatches            = ['', '', '////', '....']
@@ -183,15 +184,16 @@ for group_index, _ in enumerate(available_annotators):
 
 # Add labels, title, and legend
 plt.xlabel('LLM', size=20)
-plt.xticks([r + barWidth/2 for r in range(len(available_annotators))], [ann.replace("_", " ") for ann in available_annotators], size=20)
+plt.xticks([r + barWidth/2 for r in range(len(available_annotators))], [ANNOTATOR_NAMING[ann] for ann in available_annotators], size=20)
 plt.yticks(np.arange(0,1501,100), size=20)
 plt.ylabel('Total Images', size=20)
 plt.ylim([0,1501])
 plt.tight_layout()
-plt.legend(fontsize=20)
+plt.legend(fontsize=20, framealpha=1)
 plt.grid()
 
-plt.savefig(f"RQ2_ODD_Vector_Comparison_{args.description_filter}.png")
+os.makedirs("./output_graphs", exist_ok=True)
+plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.png")
+plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.svg")
+plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.pdf")
 plt.show()
-
-

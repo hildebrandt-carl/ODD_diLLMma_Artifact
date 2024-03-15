@@ -18,6 +18,10 @@ sys.path.append(data_loader_path)
 from constants import ODD
 from description_loader import DescriptionLoader
 
+from constants import DATASET_ORDER
+from constants import DATASET_COLOR
+from constants import DATASET_NAMING
+
 
 # Get the Data
 parser = argparse.ArgumentParser(description="Displays a comparison between different ODD dimensions")
@@ -43,7 +47,7 @@ DATASET_DIRECTORY = args.dataset_directory
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 compliance_per_datasets = []
 for dataset in available_datasets:
@@ -86,7 +90,7 @@ angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
 angles += angles[:1] # Repeat the first angle to close the circle
 
 # Initialize the spider plot
-fig, ax = plt.subplots(figsize=(20, 16), subplot_kw=dict(polar=True))
+fig, ax = plt.subplots(figsize=(23, 18), subplot_kw=dict(polar=True))
 
 # Set the name
 plt.get_current_fig_manager().set_window_title(f'{args.annotator} - {args.description_filter}')
@@ -95,19 +99,27 @@ plt.get_current_fig_manager().set_window_title(f'{args.annotator} - {args.descri
 for i in range(len(available_datasets)):
     dataset = available_datasets[i]
     compliance = compliance_per_annotator_wrapped[i]
-    ax.plot(angles, compliance, linewidth=10, linestyle='solid', label=dataset.replace("_", " "))
-    ax.fill(angles, compliance, f'C{i}', alpha=0.1)
+    ax.plot(angles, compliance, linewidth=15, linestyle='solid', label=DATASET_NAMING[dataset], c=DATASET_COLOR[dataset])
+    ax.fill(angles, compliance, c=DATASET_COLOR[dataset], alpha=0.1)
 
 # Draw one axe per variable and add labels
 plt.xticks(angles[:-1], [o.replace(' ', '\n') for o in odd_keys], verticalalignment='center')
 
 # Set the label axes
 ax.set_rlabel_position(30)
-plt.yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", "100"], color="grey", size=30)
+plt.yticks([0, 25, 50, 75, 100], ["0", "25", "50", "75", ""], color="black", size=40)
 plt.ylim(0, 100)
 plt.tick_params(axis='x', labelsize=45, pad=50)
 
-plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), fontsize=45)
+# Add legend and make space for it
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), fontsize=45, ncol=3)
 plt.tight_layout()
-plt.savefig(f"S2_Compliance_{args.annotator}_{args.description_filter}.png")
+plt.subplots_adjust(bottom=0.2) 
+
+# Save the data
+os.makedirs("./output_graphs", exist_ok=True)
+plt.savefig(f"./output_graphs/S2_Compliance_{args.annotator}_{args.description_filter}.png")
+plt.savefig(f"./output_graphs/S2_Compliance_{args.annotator}_{args.description_filter}.svg")
+plt.savefig(f"./output_graphs/S2_Compliance_{args.annotator}_{args.description_filter}.pdf")
 plt.show()
+plt.close()

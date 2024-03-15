@@ -13,7 +13,7 @@ data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
-
+from constants import DATASET_ORDER
 from description_loader import DescriptionLoader
 
 # Get the Data
@@ -40,7 +40,7 @@ DATASET_DIRECTORY = f"{args.dataset_directory}"
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
-available_datasets = sorted(available_datasets)
+available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 # Used to hold the data
 in_odd_count_array = []

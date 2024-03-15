@@ -151,19 +151,18 @@ for annotator_index, annotator in enumerate(common_annotators):
 # print(percentage_failures_found_array)
 
 # Create a figure
-plt.figure(figsize=(14, 10))
+plt.figure(figsize=(13, 10))
 
 for annotator_index, annotator in enumerate(common_annotators):
     for dataset_index, dataset in enumerate(available_datasets):
 
-        edge_color = ANNOTATOR_COLOR[annotator]
-        fill_color = 'none' if "Base" in annotator else ANNOTATOR_COLOR[annotator]
+        fill_color = ANNOTATOR_COLOR[annotator]
 
         plt.scatter(percentage_human_inspections_all_array[annotator_index][dataset_index],
                     percentage_failures_found_all_array[annotator_index][dataset_index],
                     marker=DATASET_SHAPE[dataset],
                     color=fill_color,
-                    edgecolor=edge_color,
+                    edgecolor=fill_color,
                     linewidth=6,
                     s=500)
 
@@ -175,13 +174,7 @@ plt.plot(x, x, linestyle="dashed", color='C3', linewidth=6)
 shape_legend = [mlines.Line2D([0], [0], color='black', marker=DATASET_SHAPE[dset], linestyle='None', markersize=35) for dset in available_datasets]
 
 # Create the color legend
-color_legend = []
-for ann in common_annotators:
-    if "Base" in ann:  
-        patch = mpatches.Patch(edgecolor=ANNOTATOR_COLOR[ann], facecolor='none', linewidth=4)  
-    else:
-        patch = mpatches.Patch(color=ANNOTATOR_COLOR[ann])  # Regular filled patch
-    color_legend.append(patch)
+color_legend = [mpatches.Patch(color=ANNOTATOR_COLOR[ann]) for ann in common_annotators]
 
 # Custom line for 'Human' with dashed red line
 human_line = mlines.Line2D([], [], color='red', linestyle='dashed', linewidth=6)

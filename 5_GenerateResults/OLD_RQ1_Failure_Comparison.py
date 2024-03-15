@@ -20,7 +20,7 @@ from description_loader import DescriptionLoader
 parser = argparse.ArgumentParser(description="Displays the number of failure inducing inputs")
 parser.add_argument('--annotator',
                     type=str,
-                    choices=['Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base', 'Llama_Plus', 'Vicuna_Plus'],
+                    choices=['Human', 'ChatGPT_Base', 'Vicuna_Base', 'Vicuna_Plus'],
                     required=True,
                     help="The annotator to use. Choose between 'Human', 'ChatGPT_Base', 'Llama_Base', 'Vicuna_Base', 'Llama_Plus', 'Vicuna_Plus'.")
 parser.add_argument('--description_filter',

@@ -138,7 +138,7 @@ in_out_odd_bar_array = np.array(in_out_odd_bar_array)
 exact_match_array = np.array(exact_match_array)
 
 # Create the figure
-plt.figure(figsize=(12,9))
+plt.figure(figsize=(12,8))
 
 # Assuming data definitions are given above
 barWidth = 0.3

@@ -158,14 +158,8 @@ plt.ylim(0, 100)
 plt.tick_params(axis='x', labelsize=45, pad=50)
 
 
-# Reorder the handles
-handles, labels = ax.get_legend_handles_labels()
-desired_order = ['Llama 2', 'Llama 2+', 'Vicuna', 'Vicuna+', 'ChatGPT-4V']
-label_handle_map = dict(zip(labels, handles))
-ordered_handles = [label_handle_map[label] for label in desired_order if label in label_handle_map]
-
 # Use the reordered handles and labels in plt.legend()
-plt.legend(ordered_handles, desired_order, loc='upper center', bbox_to_anchor=(0.5, -0.12), fontsize=45, ncol=3)
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), fontsize=45, ncol=3)
 plt.tight_layout()
 plt.subplots_adjust(bottom=0.2) 
 # plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), fontsize=45, ncol=3)

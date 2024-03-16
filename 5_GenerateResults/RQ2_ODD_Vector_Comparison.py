@@ -119,16 +119,22 @@ for annotator in available_annotators:
     # Find how many predictions were correct
     correct_out_odd_pred_count = np.sum(np.any(pred[true_out_odd] == 1, axis=1))
     correct_in_odd_pred_count  = np.sum(np.all(pred[true_in_odd] == 0, axis=1))
-    
+
     # Total in and out of ODD predictions
     correct_in_out_pred_count = correct_out_odd_pred_count + correct_in_odd_pred_count
 
+    # Track the number of missed
+    in_odd_missed_count = true_in_odd_count - correct_in_odd_pred_count
+    out_odd_missed_count = true_out_odd_count - correct_out_odd_pred_count
+    
     # Print the data
     print(f"Annotator: {annotator}")
     print(f"Total annotations: {np.shape(true)[0]}")
     print(f"Correctly identified (In/Out of ODD): {correct_in_out_pred_count}/{np.shape(true)[0]}")
     print(f"In ODD correctly identified: {correct_in_odd_pred_count}/{true_in_odd_count}")
     print(f"Out of ODD correctly identified: {correct_out_odd_pred_count}/{true_out_odd_count}")
+    print(f"Missed In ODD dimensions match: {in_odd_missed_count}/{true_in_odd_count}")
+    print(f"Missed Out ODD dimensions match: {out_odd_missed_count}/{true_out_odd_count}")
     print(f"Exact ODD dimensions match: {matching_rows_count}/{np.shape(true)[0]}")
     print("Bit Level check:")
     print(f"Correct bit count: {bit_match_count}/{total_bits}")
@@ -139,8 +145,8 @@ for annotator in available_annotators:
 
     in_out_odd_bar_array.append([correct_in_odd_pred_count,
                                  correct_out_odd_pred_count,
-                                 true_in_odd_count - correct_in_odd_pred_count,
-                                 true_out_odd_count - correct_out_odd_pred_count])
+                                 in_odd_missed_count,
+                                 out_odd_missed_count])
 
     exact_match_array.append([matching_rows_count,
                               np.shape(true)[0]-matching_rows_count])
@@ -201,7 +207,7 @@ for group_index, _ in enumerate(available_annotators):
     plt.bar(r2[group_index], exact_match_array[group_index, 1], bottom=bottom, color=right_colors[1], edgecolor=right_hatch_colors[1], width=barWidth, hatch=right_hatches[1], label=right_stack_labels[1] if group_index == 0 else "")
 
 # Add labels, title, and legend
-plt.xlabel('LLM', size=20)
+# plt.xlabel('LLM', size=20)
 plt.xticks([r + barWidth/2 for r in range(len(available_annotators))], [ANNOTATOR_NAMING[ann] for ann in available_annotators], size=20)
 plt.yticks(np.arange(0,1501,100), size=20)
 plt.ylabel('Total Images', size=20)
@@ -216,11 +222,11 @@ plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter
 plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.pdf")
 
 
+# Second and third bars must be big
+barWidth = 0.75
 
 
-
-
-plt.figure(figsize=(12,8))
+plt.figure(figsize=(12,7))
 
 
 # Loop over each group
@@ -241,13 +247,13 @@ for group_index, _ in enumerate(available_annotators):
 
 
 # Add labels, title, and legend
-plt.xlabel('LLM', size=20)
+# plt.xlabel('LLM', size=20)
 plt.xticks([r for r in range(len(available_annotators))], [ANNOTATOR_NAMING[ann] for ann in available_annotators], size=20)
 plt.yticks(np.arange(0,1501,100), size=20)
 plt.ylabel('Total Images', size=20)
 plt.ylim([0,1501])
 plt.tight_layout()
-plt.legend(fontsize=20, framealpha=1)
+plt.legend(fontsize=20, framealpha=1, loc="lower right")
 plt.grid()
 
 
@@ -259,12 +265,12 @@ plt.savefig(f"./output_graphs/RQ2_INOUT_ODD_Vector_Comparison_{args.description_
 
 
 
-plt.figure(figsize=(12,8))
+plt.figure(figsize=(12,7))
 
-bit_labels = ['Matched Bits', 'Undefined Bits', 'Incorrect Bits']
-bit_colors             = ['C0', 'none', 'C3']
+bit_labels = ['Matched Semantics', 'Undefined Semantics', 'Incorrect Semantics']
+bit_colors             = ['C2', 'none', 'C3']
 bit_hatches            = ['', 'xxxxx', '']
-bit_hatch_colors       = ['C0', 'C1', 'C3']
+bit_hatch_colors       = ['C2', 'C0', 'C3']
 
 
 
@@ -285,12 +291,12 @@ for group_index, _ in enumerate(available_annotators):
 
 
 # Add labels, title, and legend
-plt.xlabel('LLM', size=20)
+# plt.xlabel('LLM', size=20)
 plt.xticks([r for r in range(len(available_annotators))], [ANNOTATOR_NAMING[ann] for ann in available_annotators], size=20)
 plt.yticks(np.arange(0,101,10), size=20)
 plt.ylabel('Bits Match Percentage', size=20)
 plt.tight_layout()
-plt.legend(fontsize=20, framealpha=1)
+plt.legend(fontsize=20, framealpha=1, loc="lower right")
 plt.grid()
 
 
@@ -301,4 +307,6 @@ plt.savefig(f"./output_graphs/RQ2_PERBIT_ODD_Vector_Comparison_{args.description
 
 
 
+# # Finally, display the plot
 plt.show()
+

@@ -112,23 +112,29 @@ for annotator in available_annotators:
     # Find how many predictions were correct
     correct_out_odd_pred_count = np.sum(np.any(pred[true_out_odd] == 1, axis=1))
     correct_in_odd_pred_count  = np.sum(np.all(pred[true_in_odd] == 0, axis=1))
-    
+
     # Total in and out of ODD predictions
     correct_in_out_pred_count = correct_out_odd_pred_count + correct_in_odd_pred_count
 
+    # Track the number of missed
+    in_odd_missed_count = true_in_odd_count - correct_in_odd_pred_count
+    out_odd_missed_count = true_out_odd_count - correct_out_odd_pred_count
+    
     # Print the data
     print(f"Annotator: {annotator}")
     print(f"Total annotations: {np.shape(true)[0]}")
     print(f"Correctly identified (In/Out of ODD): {correct_in_out_pred_count}/{np.shape(true)[0]}")
     print(f"In ODD correctly identified: {correct_in_odd_pred_count}/{true_in_odd_count}")
     print(f"Out of ODD correctly identified: {correct_out_odd_pred_count}/{true_out_odd_count}")
+    print(f"Missed In ODD dimensions match: {in_odd_missed_count}/{np.shape(true)[0]}")
+    print(f"Missed Out ODD dimensions match: {out_odd_missed_count}/{np.shape(true)[0]}")
     print(f"Exact ODD dimensions match: {matching_rows_count}/{np.shape(true)[0]}")
     print("")
 
     in_out_odd_bar_array.append([correct_in_odd_pred_count,
                                  correct_out_odd_pred_count,
-                                 true_in_odd_count - correct_in_odd_pred_count,
-                                 true_out_odd_count - correct_out_odd_pred_count])
+                                 in_odd_missed_count,
+                                 out_odd_missed_count])
 
     exact_match_array.append([matching_rows_count,
                               np.shape(true)[0]-matching_rows_count])

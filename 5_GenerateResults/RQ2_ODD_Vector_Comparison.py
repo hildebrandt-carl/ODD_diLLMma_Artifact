@@ -58,8 +58,9 @@ elif args.description_filter == "Fail":
     descriptions = sorted(glob.glob(f"{DATASET_DIRECTORY}/5_Descriptions/Human/fail_*_output.txt"))
 baseline_dl = DescriptionLoader(descriptions)
 
-in_out_odd_bar_array  = []
+in_out_odd_bar_array    = []
 exact_match_array       = []
+per_bit_match_array     = []
 
 f1_score_per_dimension = []
 for annotator in available_annotators:
@@ -103,6 +104,12 @@ for annotator in available_annotators:
     exact_match_vectors = np.all(true == pred, axis=1)
     matching_rows_count = np.sum(exact_match_vectors)
 
+    # Count them
+    bit_match_count = np.sum(true == pred)
+    unknown_bit_count = np.sum(pred == -1)
+    total_bits = np.shape(pred)[0] * np.shape(pred)[1]
+    incorrect_bit_count = total_bits - bit_match_count - unknown_bit_count
+
     # Find the true in and out of ODD
     true_out_odd = np.any(true == 1, axis=1)
     true_out_odd_count = np.sum(true_out_odd)
@@ -123,6 +130,11 @@ for annotator in available_annotators:
     print(f"In ODD correctly identified: {correct_in_odd_pred_count}/{true_in_odd_count}")
     print(f"Out of ODD correctly identified: {correct_out_odd_pred_count}/{true_out_odd_count}")
     print(f"Exact ODD dimensions match: {matching_rows_count}/{np.shape(true)[0]}")
+    print("Bit Level check:")
+    print(f"Correct bit count: {bit_match_count}/{total_bits}")
+    print(f"Unknown bit count: {unknown_bit_count}/{total_bits}")
+    print(f"Incorrect bit count: {incorrect_bit_count}/{total_bits}")
+    print("============================")
     print("")
 
     in_out_odd_bar_array.append([correct_in_odd_pred_count,
@@ -132,10 +144,16 @@ for annotator in available_annotators:
 
     exact_match_array.append([matching_rows_count,
                               np.shape(true)[0]-matching_rows_count])
+    
+    per_bit_match_array.append([bit_match_count,
+                                unknown_bit_count,
+                                incorrect_bit_count,
+                                total_bits])
 
 # Convert to np array
 in_out_odd_bar_array = np.array(in_out_odd_bar_array)
 exact_match_array = np.array(exact_match_array)
+per_bit_match_array = np.array(per_bit_match_array)
 
 # Create the figure
 plt.figure(figsize=(12,8))
@@ -196,4 +214,91 @@ os.makedirs("./output_graphs", exist_ok=True)
 plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.png")
 plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.svg")
 plt.savefig(f"./output_graphs/RQ2_ODD_Vector_Comparison_{args.description_filter}.pdf")
+
+
+
+
+
+
+plt.figure(figsize=(12,8))
+
+
+# Loop over each group
+for group_index, _ in enumerate(available_annotators):
+    bottom = 0
+    
+    plt.bar(group_index, in_out_odd_bar_array[group_index, 0], bottom=bottom, color=left_colors[0], edgecolor=left_hatch_colors[0], width=barWidth, hatch=left_hatches[0], label=left_stack_labels[0] if group_index == 0 else "")
+    bottom += in_out_odd_bar_array[group_index, 0]
+
+    plt.bar(group_index, in_out_odd_bar_array[group_index, 1], bottom=bottom, color=left_colors[1], edgecolor=left_hatch_colors[1], width=barWidth, hatch=left_hatches[1], label=left_stack_labels[1] if group_index == 0 else "")
+    bottom += in_out_odd_bar_array[group_index, 1]
+
+    plt.bar(group_index, in_out_odd_bar_array[group_index, 2], bottom=bottom, color=left_colors[2], edgecolor=left_hatch_colors[2], width=barWidth, hatch=left_hatches[2], label=left_stack_labels[2] if group_index == 0 else "")
+    bottom += in_out_odd_bar_array[group_index, 2]
+
+    plt.bar(group_index, in_out_odd_bar_array[group_index, 3], bottom=bottom, color=left_colors[3], edgecolor=left_hatch_colors[3], 
+    width=barWidth, hatch=left_hatches[3], label=left_stack_labels[3] if group_index == 0 else "")
+
+
+# Add labels, title, and legend
+plt.xlabel('LLM', size=20)
+plt.xticks([r for r in range(len(available_annotators))], [ANNOTATOR_NAMING[ann] for ann in available_annotators], size=20)
+plt.yticks(np.arange(0,1501,100), size=20)
+plt.ylabel('Total Images', size=20)
+plt.ylim([0,1501])
+plt.tight_layout()
+plt.legend(fontsize=20, framealpha=1)
+plt.grid()
+
+
+os.makedirs("./output_graphs", exist_ok=True)
+plt.savefig(f"./output_graphs/RQ2_INOUT_ODD_Vector_Comparison_{args.description_filter}.png")
+plt.savefig(f"./output_graphs/RQ2_INOUT_ODD_Vector_Comparison_{args.description_filter}.svg")
+plt.savefig(f"./output_graphs/RQ2_INOUT_ODD_Vector_Comparison_{args.description_filter}.pdf")
+
+
+
+
+plt.figure(figsize=(12,8))
+
+bit_labels = ['Matched Bits', 'Undefined Bits', 'Incorrect Bits']
+bit_colors             = ['C0', 'none', 'C3']
+bit_hatches            = ['', 'xxxxx', '']
+bit_hatch_colors       = ['C0', 'C1', 'C3']
+
+
+
+# Loop over each group
+for group_index, _ in enumerate(available_annotators):
+    bottom = 0
+
+    current_per = (per_bit_match_array[group_index, 0]/per_bit_match_array[group_index, 3]) * 100
+    plt.bar(group_index, current_per, bottom=bottom, color=bit_colors[0], edgecolor=bit_hatch_colors[0], width=barWidth, hatch=bit_hatches[0], label=bit_labels[0] if group_index == 0 else "")
+    bottom += current_per
+
+    current_per = (per_bit_match_array[group_index, 1]/per_bit_match_array[group_index, 3]) * 100
+    plt.bar(group_index,current_per, bottom=bottom, color=bit_colors[1], edgecolor=bit_hatch_colors[1], width=barWidth, hatch=bit_hatches[1], label=bit_labels[1] if group_index == 0 else "")
+    bottom += current_per
+
+    current_per = (per_bit_match_array[group_index, 2]/per_bit_match_array[group_index, 3]) * 100
+    plt.bar(group_index, current_per, bottom=bottom, color=bit_colors[2], edgecolor=bit_hatch_colors[2], width=barWidth, hatch=bit_hatches[2], label=bit_labels[2] if group_index == 0 else "")
+
+
+# Add labels, title, and legend
+plt.xlabel('LLM', size=20)
+plt.xticks([r for r in range(len(available_annotators))], [ANNOTATOR_NAMING[ann] for ann in available_annotators], size=20)
+plt.yticks(np.arange(0,101,10), size=20)
+plt.ylabel('Bits Match Percentage', size=20)
+plt.tight_layout()
+plt.legend(fontsize=20, framealpha=1)
+plt.grid()
+
+
+os.makedirs("./output_graphs", exist_ok=True)
+plt.savefig(f"./output_graphs/RQ2_PERBIT_ODD_Vector_Comparison_{args.description_filter}.png")
+plt.savefig(f"./output_graphs/RQ2_PERBIT_ODD_Vector_Comparison_{args.description_filter}.svg")
+plt.savefig(f"./output_graphs/RQ2_PERBIT_ODD_Vector_Comparison_{args.description_filter}.pdf")
+
+
+
 plt.show()

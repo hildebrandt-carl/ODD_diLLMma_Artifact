@@ -126,8 +126,8 @@ for annotator in available_annotators:
     print(f"Correctly identified (In/Out of ODD): {correct_in_out_pred_count}/{np.shape(true)[0]}")
     print(f"In ODD correctly identified: {correct_in_odd_pred_count}/{true_in_odd_count}")
     print(f"Out of ODD correctly identified: {correct_out_odd_pred_count}/{true_out_odd_count}")
-    print(f"Missed In ODD dimensions match: {in_odd_missed_count}/{np.shape(true)[0]}")
-    print(f"Missed Out ODD dimensions match: {out_odd_missed_count}/{np.shape(true)[0]}")
+    print(f"Missed In ODD dimensions match: {in_odd_missed_count}/{true_in_odd_count}")
+    print(f"Missed Out ODD dimensions match: {out_odd_missed_count}/{true_out_odd_count}")
     print(f"Exact ODD dimensions match: {matching_rows_count}/{np.shape(true)[0]}")
     print("")
 

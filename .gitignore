@@ -133,7 +133,6 @@ model/
 *.h5py
 *.h5
 *.hevc
-*.mp4
 *.zip
 *.7z
 

@@ -29,8 +29,8 @@ timeline_width = frame_width * 10  # For 10 frames side by side
 canvas = np.zeros((frame_height, timeline_width, 3), dtype=np.uint8)
 
 # Define some constants
-SLIDER_SPEED    = 50
-FRAME_SKIPS     = 15
+SLIDER_SPEED    = 1
+FRAME_SKIPS     = 0
 DIRECTION       = "RIGHT"
 
 # Used to keep track of which frame we are on

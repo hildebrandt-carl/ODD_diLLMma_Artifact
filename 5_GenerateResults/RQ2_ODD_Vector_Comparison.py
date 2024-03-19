@@ -39,11 +39,13 @@ DATASET_DIRECTORY = args.dataset_directory
 
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
+available_datasets_paths = [path for path in available_datasets_paths if os.path.isdir(path)]
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
 available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
 # Get all the available annotator
 available_annotators_paths = glob.glob(f"{DATASET_DIRECTORY}/*/5_Descriptions/*")
+available_annotators_paths = [path for path in available_annotators_paths if os.path.isdir(path)]
 available_annotators       = [os.path.basename(annotator) for annotator in available_annotators_paths]
 available_annotators       = [annotator for annotator in available_annotators if "Human" not in annotator]
 available_annotators       = list(set(available_annotators))

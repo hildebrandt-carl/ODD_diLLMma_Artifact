@@ -53,6 +53,7 @@ DATASET_DIRECTORY = f"{args.dataset_directory}"
 
 # Get all the available datasets
 available_datasets_paths = glob.glob(f"{DATASET_DIRECTORY}/*")
+available_datasets_paths = [path for path in available_datasets_paths if os.path.isdir(path)]
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
 available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 

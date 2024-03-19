@@ -7,16 +7,11 @@ In the evolving landscape of Driving Automation Systems (DASs), the alignment of
 
 ## Prerequisites
 
-<!-- This software was run on Ubuntu 20.04. We require you to have [conda](https://docs.conda.io/en/latest/) installed. Once [conda](https://docs.conda.io/en/latest/) is installed you can create the conda environment required for this using:
+This software was primarily run on Ubuntu 20.04. However generating all the study graphs is not tied to any specific operating system and has also been reproduced on MacOS. We require you to have [conda](https://docs.conda.io/en/latest/) installed. Once [conda](https://docs.conda.io/en/latest/) is installed you can create the conda environment required for this using:
 
 ```bash
-conda create --name ODD --file requirements.txt
-``` -->
-
-
-
-
-
+conda env create -f environment.yml -n ODD
+``` 
 
 ## Quick Start: Reproducing Results
 
@@ -120,41 +115,6 @@ This will generate Figure 9 from the paper. This is the accuracy per semantic di
 
 ![Accuracy per semantic dimension](./5_GenerateResults/output_graphs/RQ2_ODD_Dimension_Comparison_Both.svg)
 
-
-
-
-First it presents the command used to generate the results from RQ1:
-
-![RQ1 paper results](./Misc/rq1a_b.png)
-
-And how these can be used to select the failures within the ODD presented in the paper.
-
-![RQ1 selected examples](./Misc/rq1_samples.png)
-
-
-Next it describes how to generate the results from RQ2, for example the semantics from the failing tests from each dataset.
-
-![RQ2 failure ODD semantic comparison](./Misc/rq2a_fail.png)
-
-As well as the results presented in the text:
-
-```bash
-Model: Vicuna agreement with human
-	comma.ai 2016: 20.30%
-	comma.ai 2k19: 28.90%
-	JUtah: 27.40%
-	Average: 25.53%
-Model: Llama2 agreement with human
-	comma.ai 2016: 43.80%
-	comma.ai 2k19: 26.30%
-	JUtah: 59.30%
-	Average: 43.13%
-Model: ChatGPT-4V agreement with human
-	comma.ai 2016: 83.30%
-	comma.ai 2k19: 88.10%
-	JUtah: 87.10%
-	Average: 86.17%
-```
 
 ## Quick Start: Running OpenPilot and MiniGPT
 

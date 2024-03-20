@@ -36,3 +36,12 @@ The laptop has:
 * 10th Generation i7 - 10750H 
 * 16GB Ram
 * NVIDIA GeForce RTX™ 2060 with 6GB Memory
+
+
+
+
+| Dataset Source         | Download Link | Target Directory                                   |
+|------------------------|---------------|----------------------------------------------------|
+| Comma.ai 2016 Dataset  | [Download](URL_to_comma.ai_2016_dataset) | `1_Datasets/Data/OpenPilot_2016/0_OriginalData/`   |
+| Comma.ai 2k19 Dataset  | [Download](URL_to_comma.ai_2k19_dataset) | `1_Datasets/Data/OpenPilot_2k19/0_OriginalData`    |
+| Jutah YouTube Channel  | [Download](URL_to_Jutah_Youtube_Channel_data) | `1_Datasets/Data/External_Jutah/0_OriginalData`    |

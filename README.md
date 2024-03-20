@@ -7,11 +7,40 @@ In the evolving landscape of Driving Automation Systems (DASs), the alignment of
 
 ## Prerequisites
 
+### Software
+
 This software was primarily run on Ubuntu 20.04. However generating all the study graphs is not tied to any specific operating system and has also been reproduced on MacOS. We require you to have [conda](https://docs.conda.io/en/latest/) installed. Once [conda](https://docs.conda.io/en/latest/) is installed you can create the conda environment required for this using:
 
 ```bash
 conda env create -f environment.yml -n ODD
 ``` 
+
+You will also need to have [7-Zip](https://7-zip.org) installed. To install it you can do the following:
+
+MacOS:
+```bash
+brew update
+brew install p7zip
+```
+
+Ubuntu:
+```bash
+sudo apt install p7zip-full p7zip-rar
+```
+
+### Data
+
+The entire set of data we used in this paper totals `937GB`. To download it and fully replicate it please see the dataset [README](./1_Datasets/README.md).
+
+**However:** We have provided a Zonodo link containing all the data required to replicate the result in this paper (`3GB` total). This includes:
+
+* The 1500 selected passing and failing images located in `1_Datasets/Data/<DatasetName>/4_SelectedData/`
+* The Human and LLM ODD descriptions located in `1_Datasets/Data/<DatasetName>/5_Descriptions/`
+
+You can download this data by running the following script.
+```bash
+source download_partial_dataset.sh
+```
 
 ## Quick Start: Reproducing Results
 

@@ -3,7 +3,23 @@
 In the evolving landscape of Driving Automation Systems (DASs), the alignment of sensor data with Operational Design Domains (ODDs) presents a significant challenge due to the varied and often informally specified nature of ODDs. ODD-diLLMma represents the first automated solution leveraging Large Language Models (LLMs) to systematically assess and confirm the ODD compliance of sensor data based on natural language ODD specifications. This is the first attempt at an automated approach which demonstrates efficiency improvements of up to 147% faster compliance checking compared to manual methods. This repository houses the dataset and implementation details of ODD-diLLMma as used in our research.
 
 
-![Overview of ODD-diLLMma](Misc/ArtifactImages/odd-dillmma.svg)
+![Overview of ODD-diLLMma](./Misc/ArtifactImages/odd-dillmma.svg)
+
+---
+---
+
+## Research Paper
+
+A copy of the paper can be found by clicking on the image below, or clicking [this](./PaperArtifact/ODD_diLLMma_Paper.pdf) link.
+
+[![A screenshot of the paper](./Misc/ArtifactImages/ODD_diLLMma_Screenshot.png)](./PaperArtifact/ODD_diLLMma_Paper.pdf)
+
+### Artifact Data
+
+Additionally all additional data analysis not shown in the paper can be found [here](./PaperArtifact).
+
+---
+---
 
 ## Prerequisites
 
@@ -42,9 +58,12 @@ You can download this data by running the following script.
 source download_partial_dataset.sh
 ```
 
+---
+---
+
 ## Quick Start: Reproducing Results
 
-A full description on how to reproduce the results in the paper is described in  `5_GenerateResults` [README](./5_GenerateResults/README.md). However to quickly get started, please see below:
+A full description on how to reproduce the results in the paper is described in  `5_GenerateResults` [README](./5_GenerateResults/README.md). However to quickly get started, please see below (Make sure you have downloaded the partial dataset descried above.):
 
 ### Human Study
 

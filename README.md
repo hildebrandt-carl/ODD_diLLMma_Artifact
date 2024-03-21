@@ -163,6 +163,8 @@ This will generate Figure 9 from the paper. This is the accuracy per semantic di
 
 ![Accuracy per semantic dimension](./5_GenerateResults/output_graphs/RQ2_ODD_Dimension_Comparison_Both.svg)
 
+---
+---
 
 ## Quick Start: Running OpenPilot and MiniGPT
 
@@ -180,6 +182,9 @@ This [README](./0_SetupDocumentation/OpenPilot_Setup/README.md) describes how to
 
 ![minigpt-4 example usage](./Misc/ArtifactImages//minigpt_example.png)
 
+---
+---
+
 ## Repository Structure
 
 This repository is organized into several folders, each serving a specific purpose in our study. Below is a table detailing each folder, its contents, and a link to the corresponding ReadMe for more in-depth information.
@@ -194,6 +199,9 @@ This repository is organized into several folders, each serving a specific purpo
 | `5_GenerateResults`     | Code for analyzing study results and data presentation. Key to understanding study outcomes. 				| [README](./5_GenerateResults/README.md) 	  |
 
 Please refer to the individual ReadMe files in each folder for detailed information about the contents and their usage.
+
+---
+---
 
 ## Contact
 

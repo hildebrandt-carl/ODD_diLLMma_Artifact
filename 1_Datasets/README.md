@@ -28,7 +28,7 @@ Each of these directories is structured similarly, with the following subdirecto
 
 ## Contact for Additional Data
 
-Some data, primarily the `0_OriginalData`, `1_ProcessedData`, and `2_SteeringData` are not included in this repository due to size constraints. If you require access to this data, please contact me at email TODO@todo.com for further assistance.
+Some data, primarily the `0_OriginalData`, `1_ProcessedData`, and `2_SteeringData` are not included in this repository due to size constraints. If you require access to this data, please contact me at email `hildebrandt.carl@virginia.edu` or `adw8dm@virginia.edu`.
 
 ---
 

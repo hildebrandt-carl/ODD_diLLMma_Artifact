@@ -88,4 +88,4 @@ $ ./run_model.sh <llm name> <dataset name> <GPU ID>
 
 An example of this command is show below. We can see that it is running the first ODD prompt, on all 100 images from the `OpenPilot_2k19` dataset.
 
-![minigpt-4 example usage](../../Misc/minigpt_example.png)
+![minigpt-4 example usage](../../Misc/ArtifactImages//minigpt_example.png)

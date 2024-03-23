@@ -17,3 +17,10 @@ def find_non_overlapping_sequences(difference_array, threshold, length, comparis
             consecutive_count = 0
     
     return np.array(start_indices)
+
+# Define the tick label format function
+def format_func(value, tick_number):
+    if value.is_integer():
+        return f"{int(value)}%"
+    else:
+        return f"{value:.2f}%"

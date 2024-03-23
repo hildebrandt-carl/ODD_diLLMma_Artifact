@@ -1,6 +1,7 @@
 import os
 import sys
 import glob
+import math
 import operator
 import argparse
 
@@ -9,6 +10,7 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from collections import defaultdict
+from matplotlib.ticker import FuncFormatter
 
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
@@ -16,6 +18,7 @@ data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
 from data_loader import DataLoader
+from common_functions import format_func
 from common_functions import find_non_overlapping_sequences
 
 from constants import VIDEO_FPS
@@ -32,7 +35,7 @@ parser.add_argument('--failing_deg',
                     help="Any difference greater than this is considered a failure")
 parser.add_argument('--max_length',
                     type=int,
-                    default=150,
+                    default=300,
                     help="Total frames considered for detected failures / passing")
 parser.add_argument('--dataset_directory',
                     type=str,
@@ -51,8 +54,6 @@ available_datasets_paths = [path for path in available_datasets_paths if os.path
 available_datasets = [os.path.basename(dset) for dset in available_datasets_paths]
 available_datasets = sorted(available_datasets, key=lambda x: DATASET_ORDER.get(x, float('inf')))
 
-available_datasets = [available_datasets[0]]
-
 # Create the plot
 main_figure = plt.figure(figsize=(10, 6))
 
@@ -65,9 +66,9 @@ for dataset in available_datasets:
     video_filenames = sorted(video_filenames)
 
     # Compute the total number of frames,
-    failing_image_count  = defaultdict(int)
-    total_frame_count   = defaultdict(int)
-    total_frames = 0
+    failing_image_count     = defaultdict(int)
+    total_frame_count       = defaultdict(int)
+    possible_failure_count  = defaultdict(int)
 
     for video_filename in tqdm(video_filenames, desc="Processing Video", leave=False, position=0, total=len(video_filenames)):
         # Load the data
@@ -102,26 +103,34 @@ for dataset in available_datasets:
             current_total_images_count     = np.shape(failing_frame_ids)[0]
             failing_image_count[length] += current_total_images_count
 
+            # Track the number of possible failures
+            possible_failure_count[length] += int(math.floor(np.shape(steering_difference)[0] / length))
+
     # Extract keys and values sorted by key
     keys = sorted(failing_image_count.keys())
     time_array = []
-    failure_count_array = []
+    percentage_failure_count_array = []
     for key in keys:
-        percentage_failures = failing_image_count[key]
-        failure_count_array.append(percentage_failures)
+        percentage_failures = (failing_image_count[key] / possible_failure_count[key]) * 100
+        percentage_failure_count_array.append(percentage_failures)
         current_time = key / VIDEO_FPS
+        print(f"Number Frames: {key}: Time {current_time}s: failures {failing_image_count[key]}: possible failures {possible_failure_count[key]} - {percentage_failures}%")
         time_array.append(current_time)
 
     # Plot each defaultdict as a line
-    plt.plot(time_array, failure_count_array, label=DATASET_NAMING[dataset], color=DATASET_COLOR[dataset], linewidth=5)
+    plt.plot(time_array, percentage_failure_count_array, label=DATASET_NAMING[dataset], color=DATASET_COLOR[dataset], linewidth=5)
 
 # Adding titles and labels
 plt.xlabel('Length (s)', size=20)
-plt.ylabel('Number of unique failures', size=20)
+plt.ylabel('(%) Dataset Considered Failures', size=20)
 
 plt.xticks(size=20)
 plt.yticks(size=20)
 plt.yscale('log')
+plt.ylim([0.001,100])
+
+main_ax = plt.gca()
+main_ax.yaxis.set_major_formatter(FuncFormatter(format_func))
 
 plt.tight_layout()
 plt.grid()
@@ -129,4 +138,15 @@ plt.legend(fontsize=20)
 
 plt.show()
 
-# TODO: Sanity check this code
+# The increases in failures are because of the following. Imaging the failure array is:
+# -------------------
+# |1|2|3|4|5|6|7|8|9|
+# |F|F|P|P|F|F|F|F|F|
+# -------------------
+# 
+# If you want to find failures of varying length you would find:
+# Length 1 -7 failure(s) out of 9 possible failure(s) -> 7/9 = 78%
+# Length 2 -3 failure(s) out of 4 possible failure(s) -> 3/4 = 75%
+# Length 3 -1 failure(s) out of 3 possible failure(s) -> 1/3 = 33%
+# Length 4 -1 failure(s) out of 2 possible failure(s) -> 1/2 = 50%
+# Length 5 -1 failure(s) out of 1 possible failure(s) -> 1/1 = 100%

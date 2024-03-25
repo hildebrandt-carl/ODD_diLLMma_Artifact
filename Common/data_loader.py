@@ -128,7 +128,7 @@ class DataLoader:
         
         return steer, frame_number, message
 
-    def load_data(self):
+    def load_data(self, terminal_print=True):
         
         if len(self.h5_filepaths) == 0:
             print("No filepaths found.")
@@ -136,7 +136,8 @@ class DataLoader:
         # Check if cached data exists
         cache_filepath = os.path.join(self.cache_dir, f"{self.filename}.pkl")
         if os.path.exists(cache_filepath):
-            print("\nLoading data from cache...")
+            if terminal_print:
+                print("\nLoading data from cache...")
             with open(cache_filepath, 'rb') as f:
                 self.readings = pickle.load(f)
             return

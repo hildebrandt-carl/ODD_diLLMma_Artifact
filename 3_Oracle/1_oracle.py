@@ -16,6 +16,7 @@ data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
 from data_loader import DataLoader
+from constants import CLIPPING_DEGREE
 from common_functions import find_non_overlapping_sequences
 
 # Get the folders
@@ -71,7 +72,7 @@ for video_filename in tqdm(video_filenames, desc="Processing Video", leave=False
     readings = dl.readings
 
     # Clip the readings between -90 and 90
-    readings_clipped = np.clip(readings, -90, 90)
+    readings_clipped = np.clip(readings, -CLIPPING_DEGREE, CLIPPING_DEGREE)
 
     # Find the steering difference
     max_steering = np.max(readings_clipped, axis=0)

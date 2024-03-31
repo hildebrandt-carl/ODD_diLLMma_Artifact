@@ -1,5 +1,6 @@
 import os
 import cv2
+import sys
 import glob
 import random
 import argparse
@@ -10,43 +11,31 @@ import numpy as np
 from tqdm import tqdm
 from collections import defaultdict
 
+current_dir = os.path.dirname(__file__)
+data_loader_dir = "../Common"
+data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
+sys.path.append(data_loader_path)
 
-def read_pass_fail_file(filename):
-    # Initialize empty lists for passing and failing IDs
-    passing_ids = []
-    failing_ids = []
+from pass_fail_handler import read_pass_fail_file
 
-    # Use a variable to track the current section
-    current_section = None
+# Check if there's at least one non-empty list in the dictionary
+def any_non_empty(images_dict):
+    return any(len(images) > 0 for images in images_dict.values())
 
-    # Open the file for reading
-    with open(filename, 'r') as file:
-        for line in file:
-            line = line.strip()  # Remove leading/trailing whitespace
-            if line == "Passing FrameIDs":
-                current_section = 'passing'
-            elif line == "Failing FrameIDs":
-                current_section = 'failing'
-            elif line in ("================", ""):
-                continue  # Ignore separators and empty lines
-            else:
-                # Add the ID to the correct list based on the current section
-                if current_section == 'passing':
-                    passing_ids.append(int(line))
-                elif current_section == 'failing':
-                    failing_ids.append(int(line))
+def save_images_from_video(video_dir, video_name, failing_frame_ids, passing_frame_ids, save_directory, length):
 
-    return passing_ids, failing_ids
+    # Update the failing and passing frame ids to include length
+    failing_ranges = [fid + i for fid in failing_frame_ids for i in range(length)]
+    passing_ranges = [fid + i for fid in passing_frame_ids for i in range(length)]
 
-def save_images_from_video(video_dir, video_name, failing_frame_ids, passing_frame_ids, save_directory):
     max_index = -1
     # Ensure lists are not empty to avoid ValueError from np.max
-    if failing_frame_ids and passing_frame_ids:
-        max_index = np.max([np.max(failing_frame_ids), np.max(passing_frame_ids)])
-    elif failing_frame_ids:  # Only failing_frame_ids is non-empty
-        max_index = np.max(failing_frame_ids)
-    elif passing_frame_ids:  # Only passing_frame_ids is non-empty
-        max_index = np.max(passing_frame_ids)
+    if failing_ranges and passing_ranges:
+        max_index = np.max([np.max(failing_ranges), np.max(passing_ranges)])
+    elif failing_ranges:  # Only failing_ranges is non-empty
+        max_index = np.max(failing_ranges)
+    elif passing_ranges:  # Only passing_ranges is non-empty
+        max_index = np.max(passing_ranges)
     else:
         return 
     
@@ -70,22 +59,21 @@ def save_images_from_video(video_dir, video_name, failing_frame_ids, passing_fra
             break
 
         # Check if the current frame ID matches the target frame ID
-        if current_frame_id in failing_frame_ids:
+        if current_frame_id in failing_ranges:
             save_path = f'{save_directory}/fail_{video_name}_{current_frame_id}.png'
             cv2.imwrite(save_path, frame)
             total_saved_images += 1
 
-        if current_frame_id in passing_frame_ids:
+        if current_frame_id in passing_ranges:
             save_path = f'{save_directory}/pass_{video_name}_{current_frame_id}.png'
             cv2.imwrite(save_path, frame)
             total_saved_images += 1
 
-        if total_saved_images == len(failing_frame_ids) + len(passing_frame_ids):
+        if total_saved_images == len(failing_ranges) + len(passing_ranges):
             break
     
     # Release the video capture object
     cap.release()
-
 
 # Get the folders
 parser = argparse.ArgumentParser(description="Saves the pass and fail images")
@@ -93,6 +81,10 @@ parser.add_argument('--total_images',
                     type=int,
                     default=500,
                     help="The total number of images to select")
+parser.add_argument('--length',
+                    type=int,
+                    default=1,
+                    help="Total frames considered for detected failures / passing")
 parser.add_argument('--dataset',
                     type=str,
                     choices=['External_Jutah', 'OpenPilot_2k19', 'OpenPilot_2016'],
@@ -117,7 +109,7 @@ if args.total_images % 2 != 0:
     exit()
 
 # Get all the pass fail files for that dataset
-pass_fail_files = glob.glob(f"{DATASET_DIRECTORY}/3_PassFail/*.txt")
+pass_fail_files = sorted(glob.glob(f"{DATASET_DIRECTORY}/3_PassFail/*.txt"))
 
 # Holds each of the passing and failing images
 passing_images = {}
@@ -147,6 +139,19 @@ selected_failing_count  = 0
 for key in itertools.cycle(keys):
     # Break the loop if we have selected enough items
     if (selected_passing_count >= args.total_images // 2) and (selected_failing_count >= args.total_images // 2):
+        print("All images found")
+        break
+    # Make sure there are images left to select
+    if (not any_non_empty(passing_images)) and (not any_non_empty(failing_images)):
+        print("No more passing or failing images to select from")
+        break
+    # Check if there are no more failing, but we have selected all passing
+    if (selected_passing_count >= args.total_images // 2) and (not any_non_empty(failing_images)):
+        print("No more failing images to select from, and all passing found")
+        break
+    # Check if there are no more failing, but we have selected all passing
+    if (selected_failing_count >= args.total_images // 2) and (not any_non_empty(passing_images)):
+        print("No more passing images to select from, and all failures found")
         break
     # If we have not selected enough passing images
     if selected_passing_count < args.total_images // 2:
@@ -163,6 +168,14 @@ for key in itertools.cycle(keys):
             selected_failing_images[key].append(selected_item)
             selected_failing_count += 1
 
+print("")
+print(f"Selected {selected_passing_count}/{args.total_images // 2} passing images")
+print(f"Selected {selected_failing_count}/{args.total_images // 2} failing images")
+print("")
+
+# Sort the keys
+keys = sorted(keys)
+
 # Loop through the videos and save the images
 for key in tqdm(keys, desc="Processing File", total=len(keys), position=0, leave=True):
 
@@ -171,5 +184,4 @@ for key in tqdm(keys, desc="Processing File", total=len(keys), position=0, leave
     os.makedirs(save_dir, exist_ok=True)
 
     # Save the images
-    save_images_from_video(DATASET_DIRECTORY, key, selected_failing_images[key], selected_passing_images[key], save_dir)
-
+    save_images_from_video(DATASET_DIRECTORY, key, selected_failing_images[key], selected_passing_images[key], save_dir, args.length)

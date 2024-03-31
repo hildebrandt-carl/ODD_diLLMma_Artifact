@@ -1,6 +1,7 @@
 OPENPILOT_CONTROL_RATE = 5
 VIDEO_FPS = 15
 
+CLIPPING_DEGREE = 90
 
 ODD = {"Poor Visibility": "Does this image have poor visibility (heavy rain, snow, fog, etc.) or weather conditions that may interfere with sensor operation?",
        "Image Obstructed": "Was the camera that took this image obstructed including by excessive paint or adhesive products (such as wraps, stickers, rubber coating, etc.), covered or damaged by mud, ice, snow, etc?",
@@ -44,3 +45,15 @@ DATASET_COLOR = {"OpenPilot_2016": "C6",
 DATASET_ORDER = {"OpenPilot_2016": "1",
                  "OpenPilot_2k19": "2",
                  "External_Jutah": "3"}
+
+OPENPILOT_COLORS_RGB = {"2022_04": [255, 127, 14],
+                        "2023_03": [31, 119, 180],
+                        "2023_06": [44, 160, 44]}
+
+OPENPILOT_COLORS = {"2022_04": "C0",
+                    "2023_03": "C1",
+                    "2023_06": "C2"}
+
+OPENPILOT_NAMES = {"2022_04": "Version A",
+                   "2023_03": "Version B",
+                   "2023_06": "Version C"}

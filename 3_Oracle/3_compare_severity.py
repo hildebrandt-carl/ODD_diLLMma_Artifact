@@ -24,6 +24,7 @@ from common_functions import find_non_overlapping_sequences
 from constants import DATASET_ORDER
 from constants import DATASET_COLOR
 from constants import DATASET_NAMING
+from constants import CLIPPING_DEGREE
 
 
 # Get the folders
@@ -80,7 +81,7 @@ for dataset in available_datasets:
         readings = dl.readings
 
         # Clip the readings between -90 and 90
-        readings_clipped = np.clip(readings, -90, 90)
+        readings_clipped = np.clip(readings, -CLIPPING_DEGREE, CLIPPING_DEGREE)
 
         # Find the steering difference
         max_steering = np.max(readings_clipped, axis=0)

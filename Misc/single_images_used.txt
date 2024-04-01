@@ -1,0 +1,30 @@
+2016
+VicunaBase: fail_2016-01-30--11-24-51_15_30193
+VicunaPlus: fail_2016-02-08--14-56-28_15_16880
+ChatGPT: fail_2016-06-08--11-46-01_15_9656
+
+2k19
+VicunaBase: fail_video_0627_15_309
+VicunaPlus: fail_video_1192_15_547
+ChatGPT: fail_video_1568_15_610
+
+utah
+VicunaBase: fail_047_Seoul_Beverly_Hills_Scenic_Drive_15_19377.png
+VicunaPlus: fail_015_Detroit_10_Years_After_An_18_Billion_Dollar_Bankruptcy_USA_15_21422
+ChatGPT: fail_010_California_40,000_Vineyard_Acres_Paso_Robles_USA_15_17264.png
+
+
+To showcase the images you can use
+```
+python3 show_steering_image.py --dataset OpenPilot_2k19 --image_name fail_video_0627_15_309.png
+python3 show_steering_image.py --dataset OpenPilot_2k19 --image_name fail_video_1192_15_547.png
+python3 show_steering_image.py --dataset OpenPilot_2k19 --image_name fail_video_1568_15_610.png
+
+python3 show_steering_image.py --dataset OpenPilot_2016 --image_name fail_2016-01-30--11-24-51_15_30193.png
+python3 show_steering_image.py --dataset OpenPilot_2016 --image_name fail_2016-02-08--14-56-28_15_16880.png
+python3 show_steering_image.py --dataset OpenPilot_2016 --image_name fail_2016-06-08--11-46-01_15_9656.png
+
+python3 show_steering_image.py --dataset External_Jutah --image_name fail_047_Seoul_Beverly_Hills_Scenic_Drive_15_19377.png
+python3 show_steering_image.py --dataset External_Jutah --image_name fail_015_Detroit_10_Years_After_An_18_Billion_Dollar_Bankruptcy_USA_15_21422.png
+python3 show_steering_image.py --dataset External_Jutah --image_name fail_010_California_40,000_Vineyard_Acres_Paso_Robles_USA_15_17264.png
+```

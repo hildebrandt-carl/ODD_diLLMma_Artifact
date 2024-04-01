@@ -65,6 +65,17 @@ steering_angles = dl.readings[:,index]
 
 # Load the image and 
 img = cv2.imread(image_path)
+img = cv2.resize(img, (1800, 1100)) 
+
+# Convert the image from BGR to RGB for matplotlib
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+plt.figure(figsize=(24,15))
+plt.imshow(img_rgb)
+plt.axis('off')
+plt.tight_layout()
+plt.savefig(f"{img_filename}")
+
+# Display Steering
 img = show_steering(img, steering_angles, colors, versions, CLIPPING_DEGREE)
 
 # Convert the image from BGR to RGB for matplotlib
@@ -75,6 +86,8 @@ plt.figure(figsize=(24,15))
 plt.imshow(img_rgb)
 plt.axis('off')
 plt.tight_layout()
+plt.savefig(f"{img_filename[:-4]}_steer.png")
 plt.show()
+
 
 

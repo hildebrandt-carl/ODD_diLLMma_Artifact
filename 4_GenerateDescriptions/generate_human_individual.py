@@ -9,13 +9,13 @@ from random import shuffle
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
-# Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
 from constants import ODD
+
 
 # Decare the dataset directory
 DATASET_DIRECTORY = "../1_Datasets/Data"

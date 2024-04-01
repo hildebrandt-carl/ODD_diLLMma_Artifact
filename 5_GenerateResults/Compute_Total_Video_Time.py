@@ -6,16 +6,13 @@ import argparse
 
 from tqdm import tqdm
 
-
 # Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
-
 from constants import DATASET_ORDER
-
 
 
 def get_video_length(video_path):

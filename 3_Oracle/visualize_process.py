@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 from matplotlib.lines import Line2D
 
-
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
@@ -21,6 +20,7 @@ from constants import OPENPILOT_COLORS_RGB
 from constants import OPENPILOT_NAMES
 from visualization_functions import show_steering
 from pass_fail_handler import read_pass_fail_file
+
 
 # Get the folders
 parser = argparse.ArgumentParser(description="Displays the entire process")
@@ -102,7 +102,17 @@ failing_ids = []
 
 # Create the plotting function
 plt.ion()
-fig, ax = plt.subplots(figsize=(17,8)) 
+fig1, ax1 = plt.subplots(figsize=(17,8)) 
+manager = plt.get_current_fig_manager()
+manager.window.geometry("1700x800+2050+0")
+
+fig2, ax2 = plt.subplots(figsize=(7, 2))
+manager = plt.get_current_fig_manager()
+manager.window.geometry("700x200+2050+950")
+
+# Keep track
+passing_image_counter = 0
+failing_image_counter = 0
 
 # Track the frame
 frame_id = 0
@@ -113,7 +123,8 @@ while True:
     ret, frame = cap.read()
 
     # Clear the plot
-    ax.clear()
+    ax1.clear()
+    ax2.clear()
 
     # Get the current steering angles
     steering_angles = dl.readings[:,frame_id]
@@ -130,6 +141,11 @@ while True:
     passing_ids = [p for p in all_passing_ids if min_pf_index <= p <= max_pf_index]
     failing_ids = [f for f in all_failing_ids if min_pf_index <= f <= max_pf_index]
 
+    if frame_id in failing_ids:
+        failing_image_counter += 1
+    if frame_id in passing_ids:
+        passing_image_counter += 1
+
     # Highlight continuous ranges and/or single points for passing
     if passing_ids:
         start_pass = passing_ids[0]
@@ -137,11 +153,11 @@ while True:
             if passing_ids[i] > passing_ids[i-1] + 1:  # Non-continuous sequence
                 # Ensuring at least some width for single points for visibility
                 end_pass = passing_ids[i-1] + 0.1 
-                ax.axvspan(start_pass, end_pass, color='green', alpha=0.25)
+                ax1.axvspan(start_pass, end_pass, color='green', alpha=0.25)
                 start_pass = passing_ids[i]
         # Final range or single point
         end_pass = passing_ids[-1] + 0.1 
-        ax.axvspan(start_pass, end_pass, color='green', alpha=0.25)
+        ax1.axvspan(start_pass, end_pass, color='green', alpha=0.25)
 
     # Highlight continuous ranges and/or single points for failing
     if failing_ids:
@@ -150,40 +166,58 @@ while True:
             if failing_ids[i] > failing_ids[i-1] + 1:  # Non-continuous sequence
                 # Ensuring at least some width for single points for visibility
                 end_pass = failing_ids[i-1] + 0.1  
-                ax.axvspan(start_pass, end_pass, color='green', alpha=0.25)
+                ax1.axvspan(start_pass, end_pass, color='red', alpha=0.25)
                 start_pass = failing_ids[i]
         # Final range or single point
         end_pass = failing_ids[-1] + 0.1  
-        ax.axvspan(start_pass, end_pass, color='red', alpha=0.25)
+        ax1.axvspan(start_pass, end_pass, color='red', alpha=0.25)
 
     # Update the plot
     for i in range(np.shape(dl.readings)[0]):
-        ax.plot(frame_id_window, steering_plot_window[i,:], label=OPENPILOT_NAMES[versions[i]], c=OPENPILOT_COLORS[versions[i]], linewidth=5)
+        ax1.plot(frame_id_window, steering_plot_window[i,:], label=OPENPILOT_NAMES[versions[i]], c=OPENPILOT_COLORS[versions[i]], linewidth=5)
 
     # Create custom legend entries
     legend_elements = [Line2D([0], [0], color='green', alpha=0.25, lw=10, label='Pass'),
                        Line2D([0], [0], color='red',  alpha=0.25, lw=10, label='Fail')]
 
     # Add the new legend with these entries to the top left
-    legend1 = ax.legend(handles=legend_elements, loc='upper left', fontsize=22)
-    ax.add_artist(legend1)
+    legend1 = ax1.legend(handles=legend_elements, loc='upper left', fontsize=22)
+    ax1.add_artist(legend1)
 
     # Add legend and labels
-    ax.legend(fontsize=22, loc='upper right')
-    ax.set_xlabel('Frame ID', fontsize=24)
-    ax.set_ylabel('Steering Angle', fontsize=24)
-    ax.set_ylim([-100,100])
-    ax.set_yticks(np.arange(-100, 101, 10)) 
+    ax1.legend(fontsize=22, loc='upper right')
+    ax1.set_xlabel('Frame ID', fontsize=24)
+    ax1.set_ylabel('Steering Angle', fontsize=24)
+    ax1.set_ylim([-100,100])
+    ax1.set_yticks(np.arange(-100, 101, 10)) 
     min_index = np.max([0, np.min(frame_id_window)])
     max_index = np.max([args.window_size, np.max(frame_id_window)])
     ticks_frame_ids = np.arange(min_index, max_index+10, 15)
-    ax.set_xticks(ticks_frame_ids) 
-    ax.set_xlim([min_index-1, max_index+1])
-    plt.tick_params(axis='both', which='major', labelsize=18)
-    plt.tight_layout()
-    ax.grid()
+    ax1.set_xticks(ticks_frame_ids) 
+    ax1.set_xlim([min_index-1, max_index+1])
+    ax1.tick_params(axis='both', which='major', labelsize=18)
+    ax1.grid()
 
+    # Set figure and axes backgrounds to white
+    fig2.patch.set_facecolor('white')
+    ax2.set_facecolor('white')
+    ax2.axis('off')
+
+    # Display initial text
+    text1 = f"Passing Image Count: "
+    text2 = f"{passing_image_counter}"
+    text3 = "\nFailing Image Count: "
+    text4 = f"{failing_image_counter}"
+
+    # Create separate text objects for each part
+    ax2.axis([0, 10, 0, 10])  # Set fixed axes limits
+    ax2.text(1, 5, text1, fontsize=34, ha='center', color='black')
+    ax2.text(9, 5, text2, fontsize=34, ha='center', color='green', fontweight='bold')
+    ax2.text(1, 1, text3, fontsize=34, ha='center', color='black')
+    ax2.text(9, 0.8, text4, fontsize=34, ha='center', color='red', fontweight='bold')
+    
     # Show the plot
+    plt.tight_layout()
     plt.draw()
     plt.pause(0.01)
 
@@ -208,4 +242,3 @@ while True:
 # Release the VideoCapture object and close all OpenCV windows.
 cap.release()
 cv2.destroyAllWindows()
-

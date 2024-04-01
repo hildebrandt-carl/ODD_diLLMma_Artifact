@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def find_non_overlapping_sequences(difference_array, threshold, length, comparison_operator):
     # Apply the comparison operator to the entire array
     condition_met = comparison_operator(difference_array, threshold)

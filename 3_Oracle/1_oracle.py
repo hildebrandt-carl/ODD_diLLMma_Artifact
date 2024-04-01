@@ -9,7 +9,6 @@ import numpy as np
 from tqdm import tqdm
 from collections import defaultdict
 
-
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
@@ -18,6 +17,7 @@ sys.path.append(data_loader_path)
 from data_loader import DataLoader
 from constants import CLIPPING_DEGREE
 from common_functions import find_non_overlapping_sequences
+
 
 # Get the folders
 parser = argparse.ArgumentParser(description="Used to identify which scenarios pass and which fail")

@@ -18,6 +18,7 @@ sys.path.append(data_loader_path)
 
 from pass_fail_handler import read_pass_fail_file
 
+
 # Check if there's at least one non-empty list in the dictionary
 def any_non_empty(images_dict):
     return any(len(images) > 0 for images in images_dict.values())
@@ -27,6 +28,7 @@ def save_images_from_video(video_dir, video_name, failing_frame_ids, passing_fra
     # Update the failing and passing frame ids to include length
     failing_ranges = [fid + i for fid in failing_frame_ids for i in range(length)]
     passing_ranges = [fid + i for fid in passing_frame_ids for i in range(length)]
+    passing_ranges = [] #DELETE
 
     max_index = -1
     # Ensure lists are not empty to avoid ValueError from np.max
@@ -75,6 +77,7 @@ def save_images_from_video(video_dir, video_name, failing_frame_ids, passing_fra
     # Release the video capture object
     cap.release()
 
+
 # Get the folders
 parser = argparse.ArgumentParser(description="Saves the pass and fail images")
 parser.add_argument('--total_images',
@@ -85,6 +88,9 @@ parser.add_argument('--length',
                     type=int,
                     default=1,
                     help="Total frames considered for detected failures / passing")
+parser.add_argument('--save_whole_sequence',
+                    action='store_true',
+                    help="Determines if you want to save the whole sequence or not")
 parser.add_argument('--dataset',
                     type=str,
                     choices=['External_Jutah', 'OpenPilot_2k19', 'OpenPilot_2016'],
@@ -184,4 +190,10 @@ for key in tqdm(keys, desc="Processing File", total=len(keys), position=0, leave
     os.makedirs(save_dir, exist_ok=True)
 
     # Save the images
-    save_images_from_video(DATASET_DIRECTORY, key, selected_failing_images[key], selected_passing_images[key], save_dir, args.length)
+    if args.save_whole_sequence:
+        length_given = args.length
+    else:
+        length_given = 1
+
+    # Save the images
+    save_images_from_video(DATASET_DIRECTORY, key, selected_failing_images[key], selected_passing_images[key], save_dir, length_given)

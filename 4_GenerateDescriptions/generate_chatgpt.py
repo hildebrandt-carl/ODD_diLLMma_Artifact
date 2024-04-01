@@ -7,6 +7,7 @@ import datetime
 import argparse
 from tqdm import tqdm
 
+
 # Decare the dataset directory
 DATASET_DIRECTORY = "../1_Datasets/Data"
 API_KEY_DIRECTORY = "./API_Keys"

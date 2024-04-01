@@ -5,8 +5,6 @@ import argparse
 
 import numpy as np
 
-
-# Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))

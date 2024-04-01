@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import matplotlib.patches as mpatches
 
-
 # Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
@@ -23,8 +22,6 @@ from constants import DATASET_SHAPE
 from constants import DATASET_NAMING
 from constants import ANNOTATOR_COLOR
 from constants import ANNOTATOR_NAMING
-
-
 
 
 # Get the Data

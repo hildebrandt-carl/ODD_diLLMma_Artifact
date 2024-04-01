@@ -6,7 +6,6 @@ import tkinter as tk
 import numpy as np
 from PIL import Image, ImageTk
 
-# Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
@@ -14,6 +13,7 @@ sys.path.append(data_loader_path)
 
 from constants import ODD
 from description_loader import DescriptionLoader
+
 
 def check_if_all_vectors_are_equal(arrays):
     # Take the first array as the reference

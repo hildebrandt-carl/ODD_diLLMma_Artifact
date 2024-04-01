@@ -8,14 +8,13 @@ import numpy as np
 import tkinter as tk
 from PIL import Image, ImageTk
 
-# Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
 sys.path.append(data_loader_path)
 
-
 from description_loader import DescriptionLoader
+
 
 def parse_resize_arg(resize_arg):
     resize_arg = resize_arg[1:-1]
@@ -94,11 +93,9 @@ filenames_in_odd = list(filenames[in_odd_final])
 # Clean the filenames
 filenames_in_odd = [f[:f.rfind("_")] + ".png" for f in filenames_in_odd]
 
-
 # Build the file paths
 IMAGE_DIR = f"{DATASET_DIRECTORY}/4_SelectedData"
 filepaths_in_odd = [f"{IMAGE_DIR}/{f}" for f in filenames_in_odd]
-
 
 # List of image paths
 current_image_index = 0

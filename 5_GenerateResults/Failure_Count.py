@@ -7,7 +7,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as PathEffects
 
-# Import Common
 current_dir = os.path.dirname(__file__)
 data_loader_dir = "../Common"
 data_loader_path = os.path.abspath(os.path.join(current_dir, data_loader_dir))
@@ -15,6 +14,7 @@ sys.path.append(data_loader_path)
 
 from constants import DATASET_ORDER
 from description_loader import DescriptionLoader
+
 
 # Get the Data
 parser = argparse.ArgumentParser(description="Displays the number of failure inducing inputs")

@@ -54,6 +54,6 @@ OPENPILOT_COLORS = {"2022_04": "C0",
                     "2023_03": "C1",
                     "2023_06": "C2"}
 
-OPENPILOT_NAMES = {"2022_04": "Version A",
-                   "2023_03": "Version B",
-                   "2023_06": "Version C"}
+OPENPILOT_NAMES = {"2022_04": "Version 0.8.14",
+                   "2023_03": "Version 0.9.02",
+                   "2023_06": "Version 0.9.04"}

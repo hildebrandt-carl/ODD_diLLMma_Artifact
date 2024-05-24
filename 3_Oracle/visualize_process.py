@@ -127,7 +127,13 @@ while True:
     ax2.clear()
 
     # Get the current steering angles
-    steering_angles = dl.readings[:,frame_id]
+    try:
+        steering_angles = dl.readings[:,frame_id]
+    except Exception as e:
+        break
+
+    # Crop it
+    steering_angles = np.clip(steering_angles, -CLIPPING_DEGREE, CLIPPING_DEGREE)
 
     # Update the steering angle plotting arrays
     steering_plot_window = np.roll(steering_plot_window,-1, axis=1)
@@ -222,7 +228,7 @@ while True:
     plt.pause(0.01)
 
     # Display the steering
-    frame = show_steering(frame, steering_angles, colors, op_versions, CLIPPING_DEGREE)
+    frame = show_steering(frame, steering_angles, colors, op_versions, CLIPPING_DEGREE, frame_id)
     
     # If the frame was not retrieved, we've reached the end of the video.
     if not ret:

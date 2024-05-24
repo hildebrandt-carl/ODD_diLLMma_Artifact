@@ -39,7 +39,7 @@ def rotate_point(center, point, angle):
 
     return new_x, new_y
 
-def show_steering(img, steering_angles, colors, labels=None, CLIPPING_DEGREE=90):
+def show_steering(img, steering_angles, colors, labels=None, CLIPPING_DEGREE=90, frame_id=None):
 
     # Make sure everything adds up
     assert(np.shape(steering_angles)[0] == len(colors))
@@ -82,4 +82,9 @@ def show_steering(img, steering_angles, colors, labels=None, CLIPPING_DEGREE=90)
 
         # Draw the arrow on the frame
         img = cv2.arrowedLine(img, start_point, end_point, color, thickness)
+
+    if frame_id is not None:
+        pos = (1550, 40)
+        img = cv2.putText(img, "Frame ID: {:08d}".format(frame_id), pos, font, font_scale//1.75, (0,0,0), thickness//4, cv2.LINE_AA)
+
     return img

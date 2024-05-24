@@ -85,6 +85,8 @@ def show_steering(img, steering_angles, colors, labels=None, CLIPPING_DEGREE=90,
 
     if frame_id is not None:
         pos = (1550, 40)
-        img = cv2.putText(img, "Frame ID: {:08d}".format(frame_id), pos, font, font_scale//1.75, (0,0,0), thickness//4, cv2.LINE_AA)
+        img = cv2.putText(img, "Frame ID: {:08d}".format(frame_id), pos, font, font_scale//1.75, (255,255,255), 4, cv2.LINE_AA)
+        img = cv2.putText(img, "Frame ID: {:08d}".format(frame_id), pos, font, font_scale//1.75, (0,0,0), 2, cv2.LINE_AA)
+
 
     return img

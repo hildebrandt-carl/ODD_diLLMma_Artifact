@@ -95,30 +95,6 @@ class Camerad:
     self._cam_callback(image, self.frame_wide_id, 'wideRoadCameraState', VisionStreamType.VISION_STREAM_WIDE_ROAD)
     self.frame_wide_id += 1
 
-  # def _cam_callback(self, image, frame_id, pub_type, yuv_type):
-  #     img = np.frombuffer(image, dtype=np.dtype("uint8"))
-      
-  #     # Ensure the image dimensions (H and W) are correctly defined
-  #     rgb = np.reshape(img, (H, W, 3))  # Reshape to H x W x 3 if img represents an RGB image
-
-  #     # Convert RGB to YUV using OpenCV
-  #     yuv = cv2.cvtColor(rgb, cv2.COLOR_RGB2YUV)
-  #     yuv = yuv.reshape(-1)
-  #     # Sending the YUV image data
-  #     eof = int(frame_id * 0.05 * 1e9)
-  #     self.vipc_server.send(yuv_type, yuv.tobytes(), frame_id, eof, eof)
-
-  #     # Publishing the message with the frame information
-  #     dat = messaging.new_message(pub_type)
-  #     msg = {
-  #       "frameId": frame_id,
-  #       "transform": [1.0, 0.0, 0.0,
-  #                     0.0, 1.0, 0.0,
-  #                     0.0, 0.0, 1.0]
-  #     }
-  #     setattr(dat, pub_type, msg)
-  #     pm.send(pub_type, dat)
-
   def _cam_callback(self, image, frame_id, pub_type, yuv_type):
     img = np.frombuffer(image, dtype=np.dtype("uint8"))
 
@@ -141,34 +117,6 @@ class Camerad:
     }
     setattr(dat, pub_type, msg)
     pm.send(pub_type, dat)
-
-  # def _cam_callback(self, image, frame_id, pub_type, yuv_type):
-  #     img = np.frombuffer(image, dtype=np.dtype("uint8"))
-      
-  #     # Assume H and W are defined and correct
-  #     rgb = np.reshape(img, (H, W, 3))  # Ensure this reshaping corresponds to your image format
-
-  #     # Convert RGB to YUV using OpenCV
-  #     yuv = cv2.cvtColor(rgb, cv2.COLOR_RGB2YUV)
-
-  #     # Flatten the YUV image to a 1D array and resize it to half
-  #     yuv_flattened = yuv.reshape(-1)
-  #     yuv_halved = np.resize(yuv_flattened, yuv_flattened.size // 2)
-
-  #     # Prepare to send the data
-  #     eof = int(frame_id * 0.05 * 1e9)
-  #     self.vipc_server.send(yuv_type, yuv_halved.tobytes(), frame_id, eof, eof)
-
-  #     # Publishing the message with the frame information
-  #     dat = messaging.new_message(pub_type)
-  #     msg = {
-  #       "frameId": frame_id,
-  #       "transform": [1.0, 0.0, 0.0,
-  #                     0.0, 1.0, 0.0,
-  #                     0.0, 0.0, 1.0]
-  #     }
-  #     setattr(dat, pub_type, msg)
-  #     pm.send(pub_type, dat)
 
 def imu_callback(imu, vehicle_state):
   vehicle_state.bearing_deg = math.degrees(imu.compass)

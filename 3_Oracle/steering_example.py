@@ -5,6 +5,7 @@ import operator
 import argparse
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from collections import defaultdict
@@ -37,13 +38,14 @@ print("")
 DATASET_DIRECTORY = f"{args.dataset_directory}/{args.dataset}"
 
 # Get all files
-video_file_paths = glob.glob(f"{DATASET_DIRECTORY}/2_SteeringData/*/*.h5")
-video_filenames = [os.path.basename(v)[:-2] for v in video_file_paths]
-video_filenames = list(set(video_filenames))
+video_file_paths = glob.glob(f"{DATASET_DIRECTORY}/1_ProcessedData/*.mp4")
+video_filenames = [os.path.basename(v)[:-4] for v in video_file_paths]
 video_filenames = sorted(video_filenames)
 
 # Compute the total number of frames,
 total_frames         = 0
+
+data = np.array([[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]])
 
 for video_filename in tqdm(video_filenames, desc="Processing Video", leave=False, position=0, total=len(video_filenames)):
     # Load the data
@@ -57,81 +59,49 @@ for video_filename in tqdm(video_filenames, desc="Processing Video", leave=False
     # Clip the readings between -90 and 90
     readings_clipped = np.clip(readings, -CLIPPING_DEGREE, CLIPPING_DEGREE)
 
-    # Find the steering difference
-    max_steering = np.max(readings_clipped, axis=0)
-    min_steering = np.min(readings_clipped, axis=0)
-    steering_difference = np.abs(max_steering - min_steering)
-
-    # Identify the minimum steering angle
+    # Identify the first steering angle
     first_steering_index = np.argmax(np.any(readings_clipped != 0, axis=0))
+    valid_steering =  readings_clipped[:, first_steering_index:]
 
-    # Identify the passing and failing frame IDs
-    failing_frame_ids = find_non_overlapping_sequences(steering_difference, args.failing_deg, args.length, operator.gt)
-    passing_frame_ids = find_non_overlapping_sequences(steering_difference, args.passing_deg, args.length, operator.le)
+    # Compare specific versions
+    for i, versions in enumerate([(0,1), (0,2), (1,2), (0,1,2)]):
+        considered_steering = valid_steering[list(versions)]
 
-    # Remove all frame ID's before the first steering angle
-    failing_frame_ids = failing_frame_ids[failing_frame_ids >= first_steering_index]
-    passing_frame_ids = passing_frame_ids[passing_frame_ids >= first_steering_index]
+        max_steering = np.max(considered_steering, axis=0)
+        min_steering = np.min(considered_steering, axis=0)
 
-    # Track the number of frames
-    current_total_images_count   = np.shape(steering_difference)[0]
-    current_failing_images_count = np.shape(failing_frame_ids)[0] * args.length
-    current_passing_images_count = np.shape(passing_frame_ids)[0] * args.length
-    current_unknown_images_count = current_total_images_count - (current_failing_images_count + current_passing_images_count)
-    total_frames                 += current_total_images_count
-    total_failing_frames         += current_failing_images_count
-    total_passing_frames         += current_passing_images_count
-    total_unknown_frames         += current_unknown_images_count
+        difference = max_steering - min_steering
+
+        # Count the number of instances that have steering differences greater than 5 degrees
+        for j, max_difference in enumerate([5, 10, 15, 20, 25]): 
+
+            count_exceeds_threshold = np.sum(difference > max_difference)
+            data[j, i] = data[j, i] + count_exceeds_threshold
     
-    # Display the data
-    print(f"{video_filename} has: {current_passing_images_count}/{current_total_images_count} passing images")
-    print(f"{video_filename} has: {current_failing_images_count}/{current_total_images_count} failing images")
-    print(f"{video_filename} has: {current_unknown_images_count}/{current_total_images_count} unknown images")
+# Sample data
+n_groups = 5
+group1 = data[:, 0]
+group2 = data[:, 1]
+group3 = data[:, 2]
+group4 = data[:, 3]
 
-    # Save them into dictionaries
-    for pass_id in passing_frame_ids:
-        passing_images[video_filename].append(pass_id)
-    for fail_id in failing_frame_ids:
-        failing_images[video_filename].append(fail_id)
+# Create an index for each tick position
+index = np.arange(n_groups)
+bar_width = 0.2
 
-# Print some statistics
-print(f"Statistics for {args.dataset}")
-fail_count = 0
-pass_count = 0
-# Sum the fails and passing images
-for video_filename in video_filenames:
-    fail_count += len(failing_images[video_filename])
-    pass_count += len(passing_images[video_filename])
-print(f"Total Failing Instances: {fail_count}")
-print(f"Total Passing Instances: {pass_count}")
+# Create a bar for each group
+plt.bar(index, group1, bar_width, label='V1, V2')
+plt.bar(index + bar_width, group2, bar_width, label='V1, V3')
+plt.bar(index + 2 * bar_width, group3, bar_width, label='V2, V3')
+plt.bar(index + 3 * bar_width, group4, bar_width, label='V1, V2, V3')
 
-print("")
-print(f"Total Frames: {total_frames}")
-print(f"Total Failing Frames: {total_failing_frames}")
-print(f"Total Passing Frames: {total_passing_frames}")
-print(f"Total Unknown Frames: {total_unknown_frames}")
+# Add labels, title, etc.
+plt.xlabel('Maximum Difference')
+plt.ylabel('Number of Violations')
+plt.xticks(index + 1.5 * bar_width, ['5', '10', '15', '20', '25'])
 
-# Create the save dir
-save_dir = f"{DATASET_DIRECTORY}/3_PassFail"
-os.makedirs(save_dir, exist_ok=True)
-print(f"Saving to {save_dir}")
+# Adding a legend
+plt.legend()
 
-# Get all the video_filenames for each datasets
-all_videos = set(passing_images.keys()) | set(passing_images.keys())
-
-for video_filename in video_filenames:
-    passing_ids = sorted(passing_images[video_filename])
-    failing_ids = sorted(failing_images[video_filename])
-
-    # Save them to the file
-    with open(f'{save_dir}/{video_filename}.txt', 'w') as file:
-        file.write(f"Passing FrameIDs\n")
-        file.write(f"================\n")
-        for item in passing_ids:
-            file.write(f"{item}\n")
-        file.write(f"================\n")
-        file.write(f"Failing FrameIDs\n")
-        file.write(f"================\n")
-        for item in failing_ids:
-            file.write(f"{item}\n")
-        file.write(f"================\n")
+# Show the plot
+plt.show()

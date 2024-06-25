@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 import argparse
-import math
 import cv2
+import math
 import os
 import signal
 import threading
 import time
 from multiprocessing import Process, Queue
 from typing import Any
+import h5py
 
-import carla  # pylint: disable=import-error
 import numpy as np
 import pyopencl as cl
 import pyopencl.array as cl_array
@@ -41,14 +41,15 @@ def parse_args(add_args=None):
   parser.add_argument('--filename', type=str, help="Should be provided relative to the home directory", default='')
   return parser.parse_args(add_args)
 
+
 class VehicleState:
   def __init__(self):
     self.speed = 0.0
     self.angle = 0.0
     self.bearing_deg = 0.0
-    self.vel = carla.Vector3D()
+    self.vel = [0,0,0]
     self.cruise_button = 0
-    self.is_engaged = False
+    self.is_engaged = True
     self.ignition = True
 
 
@@ -238,6 +239,7 @@ def read_video_file(filename: str, camerad: Camerad, exit_event: threading.Event
     rk.keep_time()
     camerad.frame_id += 1
 
+
 class CarlaBridge:
 
   def __init__(self, arguments):
@@ -247,15 +249,14 @@ class CarlaBridge:
     msg.liveCalibration.validBlocks = 20
     msg.liveCalibration.rpyCalib = [0.0, 0.0, 0.0]
     Params().put("CalibrationParams", msg.to_bytes())
-    # Params().put_bool("WideCameraOnly", not arguments.dual_camera)
+    Params().put_bool("WideCameraOnly", False)
 
     self._args = arguments
-    self._carla_objects = []
     self._camerad = None
     self._exit_event = threading.Event()
     self._threads = []
     self._keep_alive = True
-    self.started = False
+    self.started = True
     signal.signal(signal.SIGTERM, self._on_shutdown)
     self._exit = threading.Event()
 
@@ -290,11 +291,10 @@ class CarlaBridge:
 
     global end_of_video
 
-    self._camerad = Camerad()
+    pass
 
     vehicle_state = VehicleState()
-
-    cruise_button = 0
+    self._camerad = Camerad()
 
     # launch fake car threads
     self._threads.append(threading.Thread(target=panda_state_function, args=(vehicle_state, self._exit_event,)))
@@ -310,19 +310,22 @@ class CarlaBridge:
     throttle_op = steer_op = brake_op = 0.
     throttle_manual = steer_manual = brake_manual = 0.
 
-    old_steer = old_brake = old_throttle = 0.
-    throttle_manual_multiplier = 0.7  # keyboard signal is always 1
-    brake_manual_multiplier = 0.7  # keyboard signal is always 1
-    steer_manual_multiplier = 45 * STEER_RATIO  # keyboard signal is always 1
-
     # loop
     rk = Ratekeeper(100, print_delay_threshold=0.05)
 
-    while self._keep_alive:
+    out_filename = filename[:filename.rfind(".")] + ".h5"
+    h5_out = h5py.File(out_filename, "w")
+    write_counter = 0
+
+    while (self._keep_alive)and (end_of_video != True):
       # 1. Read the throttle, steer and brake from op or manual controls
       # 2. Set instructions in Carla
       # 3. Send current carstate to op via can
 
+      cruise_button = 0
+      throttle_out = steer_out = brake_out = 0.0
+      throttle_op = steer_op = brake_op = 0.0
+      throttle_manual = steer_manual = brake_manual = 0.0
 
       sm.update(0)
 
@@ -331,14 +334,13 @@ class CarlaBridge:
       brake_op = clip(-sm['carControl'].actuators.accel / 4.0, 0.0, 1.0)
       steer_op = sm['carControl'].actuators.steeringAngleDeg
 
-      throttle_out = throttle_op
-      steer_out = steer_op
-      brake_out = brake_op
+      data = np.array([steer_op, self._camerad.frame_id])
+      h5_out.create_dataset("{0:09d}_steering_angle".format(write_counter), np.shape(data), dtype='f', data=data)
+      write_counter += 1
 
-      steer_out = steer_rate_limit(old_steer, steer_out)
+      # --------------Step 2-------------------------------
+      steer_out = steer_op 
       old_steer = steer_out
-
-    
 
       # --------------Step 3-------------------------------
       vel = [0,0,0]
@@ -352,16 +354,14 @@ class CarlaBridge:
       if rk.frame % PRINT_DECIMATION == 0:
         print("frame: ", "engaged:", is_openpilot_engaged)
 
-
       rk.keep_time()
       self.started = True
+
+    h5_out.close()
 
   def close(self):
     self.started = False
     self._exit_event.set()
-
-    for t in reversed(self._threads):
-      t.join()
 
   def run(self, queue, retries=-1, filename=""):
     bridge_p = Process(target=self.bridge_keep_alive, args=(queue, retries, filename), daemon=True)

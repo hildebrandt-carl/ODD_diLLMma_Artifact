@@ -50,7 +50,7 @@ Close open pilot and make sure you are using the same commit as I am:
 cd ~
 git clone git@github.com:commaai/openpilot.git
 cd ~/openpilot 
-git checkout d1cf31bced9609f43a518b2c07b0f440ecc2479a
+git checkout a48ec655ac4983145bc93c712ecabac75b886e11
 ```
 
 Next install it using:
@@ -62,7 +62,8 @@ tools/ubuntu_setup.sh
 
 If you get an error about installing pyenv do the following:
 ```bash
-rm -rf /home/<user>/.pyenrc
+rm -rf /home/<user>/.pyenv
+source ~/.bashrc
 tools/ubuntu_setup.sh
 ```
 

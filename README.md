@@ -8,6 +8,12 @@ In the evolving landscape of Driving Automation Systems (DASs), the alignment of
 ---
 ---
 
+## Video Summary
+
+A summary of the work can be found here:
+
+[![Video Cover](Misc/ArtifactImages/video_cover.png)](https://youtu.be/sXBGZOK7RMo)
+
 ## Research Paper
 
 A copy of the paper can be found by clicking on the image below, or clicking [this](./PaperArtifact/ODD_diLLMma_Paper.pdf) link.

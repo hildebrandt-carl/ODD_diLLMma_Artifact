@@ -10,7 +10,7 @@ In the evolving landscape of Driving Automation Systems (DASs), the alignment of
 
 ## Video Summary
 
-A summary of the work can be found here:
+A summary of the work can be found on [youtube](https://youtu.be/sXBGZOK7RMo), or by clicking on the image below:
 
 [![Video Cover](Misc/ArtifactImages/video_cover.png)](https://youtu.be/sXBGZOK7RMo)
 
